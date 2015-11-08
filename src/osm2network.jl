@@ -1,4 +1,3 @@
-import OpenStreetMapParser
 const OSM = OpenStreetMapParser
 
 const ROAD_CLASSES = Dict(
