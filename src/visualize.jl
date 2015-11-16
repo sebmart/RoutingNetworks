@@ -51,10 +51,10 @@ function visualize(n::Network)
         set_fillcolor(nodes[selectedNode], SFML.Color(0,0,0,150))
         set_fillcolor(nodes[id], SFML.red)
         selectedNode = id
-        set_title(window, "Network Visualization, selectedNode : $id")
+        set_title(window, "Node : $id in: $(in_neighbors(n.graph,id)) out: $(out_neighbors(n.graph,id))")
     end
 
-    node_radius = 1.0
+    node_radius = 1.
     # Defines the window, an event listener, and view
     window = RenderWindow("Network Visualization", 1200, 1200)
     set_framerate_limit(window, 60)

@@ -111,3 +111,65 @@ function point_inside_polygon(x::Float64,y::Float64,poly::Vector{Tuple{Float64,F
   end
   return inside
 end
+
+"""
+Only keep nodes that are intersections, suppose strong connectivity
+"""
+function intersections(n::Network)
+    g = n.graph
+    #################################
+    # First pass: detect intersections nodes
+    #################################
+    nodes = Node[]
+    index = Int[]
+    revIndex = zeros(Int,nv(g))
+    for i in vertices(n.graph)
+        if length(all_neighbors(n.graph,i)) != 2 || indegree(n.graph,i) != outdegree(n.graph,i)
+            push!(nodes,n.nodes[i])
+            revIndex[i] = length(nodes)
+            push!(index,i)
+        end
+    end
+
+    #################################
+    # second pass:  recreate graph
+    #################################
+
+    g2 = DiGraph(length(nodes))
+    roads = Dict{Tuple{Int,Int},Road}()
+    for i in vertices(g2)
+        for j in out_neighbors(g,index[i])
+            if index[i] == 9342
+                println("$j ")
+            end
+            dist = n.roads[index[i],j].distance
+            roadType = n.roads[index[i],j].roadType
+            k = j
+            k2 = i
+            while revIndex[k] == 0
+                if index[i] == 9342
+                    print("$k ")
+                end
+                next = out_neighbors(g,k)[1]
+                if next == k2
+                    next = out_neighbors(g,k)[2]
+                end
+                dist += n.roads[k,next].distance
+                roadType = max(roadType, n.roads[k,next].roadType)
+                k2 = k
+                k = next
+            end
+            if i != revIndex[k]
+                if has_edge(g2,i,revIndex[k])
+                    dist = min(dist, roads[i,revIndex[k]].distance)
+                    roadType = max(roadType, roads[i,revIndex[k]].roadType)
+                else
+                    add_edge!(g2, i, revIndex[k])
+                end
+                roads[i,revIndex[k]] = Road(dist,roadType)
+            end
+
+        end
+    end
+    return Network(g2,nodes,roads)
+end

@@ -5,6 +5,7 @@ import OpenStreetMapParser
 
 export Node, Road, Network, osm2network, visualize, subsetNetwork, removeNodes
 export singleNodes, inPolygon, MANHATTAN_BORDER, roadTypeSubset
+export stronglyConnected, intersections
 
 
 
