@@ -38,10 +38,11 @@ end
 """
 Extract single nodes from network
 """
-function singleNodes(n::Network)
+singleNodes(n::Network) = singleNodes(n.graph)
+function singleNodes(g::DiGraph)
     singles = Int[]
-    for i in vertices(n.graph)
-        if degree(n.graph,i) == 0
+    for i in vertices(g)
+        if degree(g,i) == 0
             push!(singles, i)
         end
     end
@@ -49,12 +50,12 @@ function singleNodes(n::Network)
 end
 
 """
-Return strongly-connected graph with
+Return strongly connected component starting from a node
 """
-function stronglyConnected(n::Network)
-    c = strongly_connected_components(n.graph)
-    indices =  c[indmax(Int[length(i) for i in c])]
-    return subsetNetwork(n,indices)
+function stronglyConnected(n::Network, node::Int)
+    indices  = singleNodes(bfs_tree(n.graph,node))
+    indices2 = singleNodes(bfs_tree(LightGraphs.reverse(n.graph), node))
+    return removeNodes(n,[indices;indices2])
 end
 
 
@@ -89,27 +90,23 @@ function roadTypeSubset(n::Network, roadTypes::AbstractArray{Int})
 end
 
 function point_inside_polygon(x::Float64,y::Float64,poly::Vector{Tuple{Float64,Float64}})
-  n = length(poly)
-  inside =false
+    n = length(poly)
+    inside =false
 
-  p1x,p1y = poly[1]
-  for i in 0:n
-    p2x,p2y = poly[i % n + 1]
-    if y > min(p1y,p2y)
-      if y <= max(p1y,p2y)
-        if x <= max(p1x,p2x)
-          if p1y != p2y
-            xinters = (y-p1y)*(p2x-p1x)/(p2y-p1y)+p1x
-          end
-          if p1x == p2x || x <= xinters
-            inside = !inside
-          end
+    p1x,p1y = poly[1]
+    for i in 0:n
+        p2x,p2y = poly[i % n + 1]
+        if y > min(p1y,p2y) && y <= max(p1y,p2y) && x <= max(p1x,p2x)
+            if p1y != p2y
+                xinters = (y-p1y)*(p2x-p1x)/(p2y-p1y)+p1x
+            end
+            if p1x == p2x || x <= xinters
+                inside = !inside
+            end
         end
-      end
+        p1x,p1y = p2x,p2y
     end
-    p1x,p1y = p2x,p2y
-  end
-  return inside
+    return inside
 end
 
 """
