@@ -136,17 +136,11 @@ function intersections(n::Network)
     roads = Dict{Tuple{Int,Int},Road}()
     for i in vertices(g2)
         for j in out_neighbors(g,index[i])
-            if index[i] == 9342
-                println("$j ")
-            end
             dist = n.roads[index[i],j].distance
             roadType = n.roads[index[i],j].roadType
             k = j
-            k2 = i
+            k2 = index[i]
             while revIndex[k] == 0
-                if index[i] == 9342
-                    print("$k ")
-                end
                 next = out_neighbors(g,k)[1]
                 if next == k2
                     next = out_neighbors(g,k)[2]
