@@ -1,3 +1,7 @@
+#######################################
+## Contains osm2network, to transform an osm file into a network
+#######################################
+
 const OSM = OpenStreetMapParser
 
 const ROAD_CLASSES = Dict(
