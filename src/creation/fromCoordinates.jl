@@ -2,6 +2,7 @@
 ## Create city graph from lonlat polygon
 ## Automatically download it from OSM overpass API
 ###################################################
+
 """
     Create the road network inside the defined polygon.
     - query the osm database using the overpass API if no osm file is given
