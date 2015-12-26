@@ -1,3 +1,4 @@
 .ipynb_checkpoints
 *.ipynb
 *.DS_Store
+*.jld

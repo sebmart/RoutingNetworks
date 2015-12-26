@@ -3,14 +3,20 @@ module NetworkTools
 using LightGraphs, SFML, NearestNeighbors
 import OpenStreetMapParser
 
-export Node, Road, Network, osm2network, visualize, subsetNetwork, removeNodes
-export singleNodes, inPolygon, MANHATTAN_BORDER, roadTypeSubset
-export stronglyConnected, intersections
+export Node, Road, Network
+
+export osm2network, subsetNetwork, removeNodes, singleNodes, inPolygon, roadTypeSubset
+export stronglyConnected, intersections, queryFromCoordinates
+
+export visualize
+
+export MANHATTAN_POLY
 
 include("network.jl")
 
 
 include("creation/osm2network.jl")
+include("creation/fromCoordinates")
 include("creation/reduceNetwork.jl")
 
 include("visualization/visualize.jl")

@@ -89,6 +89,9 @@ function roadTypeSubset(n::Network, roadTypes::AbstractArray{Int})
     return Network(g,deepcopy(n.nodes), roads)
 end
 
+"""
+    Check is a point is inside a polygon
+"""
 function point_inside_polygon(x::Float64,y::Float64,poly::Vector{Tuple{Float64,Float64}})
     n = length(poly)
     inside =false
