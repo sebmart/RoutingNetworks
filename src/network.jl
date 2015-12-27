@@ -1,4 +1,6 @@
 immutable Node
+  x::Float64
+  y::Float64
   lon::Float64
   lat::Float64
 end

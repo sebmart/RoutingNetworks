@@ -90,29 +90,6 @@ function roadTypeSubset(n::Network, roadTypes::AbstractArray{Int})
 end
 
 """
-    Check is a point is inside a polygon
-"""
-function point_inside_polygon(x::Float64,y::Float64,poly::Vector{Tuple{Float64,Float64}})
-    n = length(poly)
-    inside =false
-
-    p1x,p1y = poly[1]
-    for i in 0:n
-        p2x,p2y = poly[i % n + 1]
-        if y > min(p1y,p2y) && y <= max(p1y,p2y) && x <= max(p1x,p2x)
-            if p1y != p2y
-                xinters = (y-p1y)*(p2x-p1x)/(p2y-p1y)+p1x
-            end
-            if p1x == p2x || x <= xinters
-                inside = !inside
-            end
-        end
-        p1x,p1y = p2x,p2y
-    end
-    return inside
-end
-
-"""
 Only keep nodes that are intersections, suppose strong connectivity
 """
 function intersections(n::Network)

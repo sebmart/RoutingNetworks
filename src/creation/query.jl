@@ -20,17 +20,3 @@ function queryFromCoordinates(poly::Vector{Tuple{Float64,Float64}}; osmfile="")
     n = subsetNetwork(n,inPolygon(n,poly))
     n = removeNodes(n,singleNodes(n))
 end
-
-"""
-    Return bounding box of polygon
-"""
-function boundingBox(poly::Vector{Tuple{Float64,Float64}})
-    minX = Inf; maxX = -Inf; minY = Inf; maxY = -Inf
-    for (x,y) in poly
-        minX = min(minX,x)
-        maxX = max(maxX,x)
-        minY = min(minY,y)
-        maxY = max(maxY,y)
-    end
-    return (minX,maxX,minY,maxY)
-end

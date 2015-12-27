@@ -47,15 +47,7 @@ services(w::OSM.Way) = (get(w.tags,"highway", "") == "services")
 reverse(w::OSM.Way) = (get(w.tags,"oneway", "") == "-1")
 toradians(degree::Float64) = degree * π / 180.0
 
-"distance between the two points in meters"
-function distance(pt1::Node, pt2::Node)
-    dLat = toradians(pt2.lat - pt1.lat)
-    dLon = toradians(pt2.lon - pt1.lon)
-    lat1 = toradians(pt1.lat)
-    lat2 = toradians(pt2.lat)
-    a = sin(dLat/2)^2 + sin(dLon/2)^2 * cos(lat1) * cos(lat2)
-    2.0 * atan2(sqrt(a), sqrt(1-a)) * 6373.0 * 1000
-end
+
 
 """
 Opens a OSM file,
@@ -74,11 +66,10 @@ function osm2network(filename::AbstractString)
       node_id[osm_id[i]] = i
   end
   #construct the "Node" objects
-  nodes = Array{Node}(length(osm_id))
-  for i in 1:length(nodes)
-    lon, lat = osm.nodes[i].lonlat
-    nodes[i] = Node(lon,lat)
-  end
+  lonlat = Tuple{Float64,Float64}[c.lonlat for c in osm.nodes]
+  bounds = boundingBox(lonlat)
+  center = ((bounds[2]-bounds[1])/2, (bounds[4]-bounds[3])/2)
+  nodes = Node[(x,y) = toENU(lon,lat,center); Node(x,y,lon,lat) for (lon,lat) in lonlat]
 
   g = DiGraph(length(nodes))
 
