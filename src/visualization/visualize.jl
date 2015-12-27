@@ -21,20 +21,10 @@ function visualize(n::Network)
     end
 
     function getPositions()
-        minLon = minimum([node.lon for node in n.nodes])
-        maxLon = maximum([node.lon for node in n.nodes])
-        minLat = minimum([node.lat for node in n.nodes])
-        maxLat = maximum([node.lat for node in n.nodes])
-        shrink = max(maxLat-minLat,maxLon-minLon)
-
-        function gps2pos(lon,lat)
-            return 1000*(lon - (minLon + maxLon)/2)/shrink, -1000*(lat - (minLat + maxLat)/2)/shrink
-        end
         positions = Array{Vector2f}(length(n.nodes))
 
         for i in 1:length(positions)
-           x,y = gps2pos(n.nodes[i].lon, n.nodes[i].lat)
-           positions[i] = Vector2f(x,y)
+           positions[i] = Vector2f(n.nodes[i].x,n.nodes[i].y)
         end
         # KD-tree with positions
         dataPos = Array{Float64,2}(2,length(positions))
@@ -42,7 +32,7 @@ function visualize(n::Network)
            dataPos[1,i] = p.x
            dataPos[2,i] = p.y
         end
-        return positions, KDTree(dataPos), gps2pos
+        return positions, KDTree(dataPos)
     end
 
     function updateSelectedNode(x::Int32, y::Int32)
@@ -54,18 +44,24 @@ function visualize(n::Network)
         set_title(window, "Node : $id in: $(in_neighbors(n.graph,id)) out: $(out_neighbors(n.graph,id))")
     end
 
-    node_radius = 1.
+    node_radius = 10.
     # Defines the window, an event listener, and view
-    window = RenderWindow("Network Visualization", 1200, 1200)
+    window_w, window_h = 1200,1200
+    window = RenderWindow("Network Visualization", window_w, window_h)
     set_framerate_limit(window, 60)
     event = Event()
-    view = View(Vector2f(0,0), Vector2f(1000, 1000))
+
+
+
+
+
+    positions, kdtree = getPositions()
+
+    minX, maxX, minY, maxY = boundingBox(Tuple{Float64,Float64}[(p.x,p.y) for p in positions])
+    viewWidth = max(maxX-minX, (maxY-minY)*window_w/window_h)
+    viewHeigth = max(maxY-minY, (maxX-minX)*window_h/window_w)
+    view = View(Vector2f((minX+maxX)/2,(minY+maxY)/2), Vector2f(viewWidth, viewHeigth))
     zoomLevel = 1.0
-
-
-    positions, kdtree, gps2pos = getPositions()
-
-
     nodes = createNodes()
     roads = createRoads()
     selectedNode = 1
@@ -83,7 +79,7 @@ function visualize(n::Network)
                 set_size(view, Vector2f(size.width, size.height))
                 zoom(view, zoomLevel)
             end
-            if get_type(event) == EventType.KEY_PRESSED && get_key(event).key_code == KeyCode.ESCAPE
+            if get_type(event) == EventType.KEY_PRESSED && (get_key(event).key_code == KeyCode.ESCAPE || get_key(event).key_code == KeyCode.Q)
                 close(window)
             end
             if get_type(event) == EventType.MOUSE_BUTTON_PRESSED && get_mousebutton(event).button == MouseButton.LEFT

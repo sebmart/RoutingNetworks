@@ -1,12 +1,12 @@
-module NetworkTools
+module RoutingNetworks
 
-using LightGraphs, SFML, NearestNeighbors, JLD
-import OpenStreetMapParser, Geodesy
+using LightGraphs, SFML, NearestNeighbors
+import OpenStreetMapParser, Geodesy, JLD
 
 export Node, Road, Network
 
 export osm2network, subsetNetwork, removeNodes, singleNodes, inPolygon, roadTypeSubset
-export stronglyConnected, intersections, queryFromCoordinates
+export stronglyConnected, intersections, queryOsmBox, queryOsmPolygon
 export loadTemplate, saveTemplate, createTemplates
 export squareNetwork, centralizedNetwork
 
