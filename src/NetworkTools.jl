@@ -1,7 +1,7 @@
 module NetworkTools
 
 using LightGraphs, SFML, NearestNeighbors, JLD
-import OpenStreetMapParser
+import OpenStreetMapParser, Geodesy
 
 export Node, Road, Network
 

@@ -50,3 +50,11 @@ function point_inside_polygon(x::Float64,y::Float64,poly::Vector{Tuple{Float64,F
     end
     return inside
 end
+
+"""
+    projects latitude and longitude to ENU coordinate system
+"""
+function toENU(lon::Float64, lat::Float64, center::Tuple{Float64,Float64})
+    enu = Geodesy.ENU(Geodesy.LLA(lat,lon), Geodesy.LLA(center[2],center[1]))
+    return enu.east, enu.north
+end
