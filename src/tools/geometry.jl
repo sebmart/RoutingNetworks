@@ -17,15 +17,22 @@ function boundingBox(poly::Vector{Tuple{Float64,Float64}})
 end
 
 """
-    Distance between the two points in meters
+    Distance between the two points in meters (true geodesic distance from LLA coordinates)
 """
-function distance(pt1::Node, pt2::Node)
+function distanceGeo(pt1::Node, pt2::Node)
     dLat = toradians(pt2.lat - pt1.lat)
     dLon = toradians(pt2.lon - pt1.lon)
     lat1 = toradians(pt1.lat)
     lat2 = toradians(pt2.lat)
     a = sin(dLat/2)^2 + sin(dLon/2)^2 * cos(lat1) * cos(lat2)
     2.0 * atan2(sqrt(a), sqrt(1-a)) * 6373.0 * 1000
+end
+
+"""
+    Distance between the two points in meters (from coordinates)
+"""
+function distanceCoord(pt1::Node, pt2::Node)
+    return sqrt((pt2.x-pt1.x)**2+(pt2.y-pt1.y)**2)
 end
 
 """

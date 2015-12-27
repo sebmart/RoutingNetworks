@@ -86,13 +86,13 @@ function osm2network(filename::AbstractString)
         end
         if !has_edge(g,edge)
           add_edge!(g,edge)
-          roads[src(edge),dst(edge)] = Road(distance(nodes[src(edge)],nodes[dst(edge)]), roadway(w))
+          roads[src(edge),dst(edge)] = Road(distanceGeo(nodes[src(edge)],nodes[dst(edge)]), roadway(w))
         end
         if !oneway(w)
           edge = Edge(dst(edge),src(edge))
           if !has_edge(g,edge)
             add_edge!(g,edge)
-            roads[src(edge),dst(edge)] = Road(distance(nodes[src(edge)],nodes[dst(edge)]), roadway(w))
+            roads[src(edge),dst(edge)] = Road(distanceGeo(nodes[src(edge)],nodes[dst(edge)]), roadway(w))
           end
         end
       end

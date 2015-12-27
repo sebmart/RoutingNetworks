@@ -4,6 +4,7 @@ immutable Node
   lon::Float64
   lat::Float64
 end
+Node(x::Float64,y::Float64) = Node(x,y,0.,0.)
 
 immutable Road
   # Distance in meters
