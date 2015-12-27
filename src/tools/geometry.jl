@@ -32,7 +32,7 @@ end
     Distance between the two points in meters (from coordinates)
 """
 function distanceCoord(pt1::Node, pt2::Node)
-    return sqrt((pt2.x-pt1.x)**2+(pt2.y-pt1.y)**2)
+    return sqrt((pt2.x-pt1.x)^2+(pt2.y-pt1.y)^2)
 end
 
 """

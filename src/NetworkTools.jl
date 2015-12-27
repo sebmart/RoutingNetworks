@@ -18,10 +18,10 @@ include("network.jl")
 
 include("creation/osm2network.jl")
 include("creation/query.jl")
-include("creation/reduceNetwork.jl")
+include("creation/subsets.jl")
 include("creation/templates.jl")
 include("creation/square.jl")
-include("creation/centralized.jl")
+include("creation/urban.jl")
 
 include("visualization/visualize.jl")
 

@@ -1,5 +1,5 @@
 ###################################################
-## complex virtual city
+## complex virtual city, with main city and suburbs
 ###################################################
 
 """
@@ -8,6 +8,6 @@ Elaborate network, depending on parameters
 - nSub  = number of city's suburb (half the city width)
 Represent whole city, with commuting effects
 """
-function centralizedNetwork(width::Int=8, nSub::Int=8)
+function urbanNetwork(width::Int=8, nSub::Int=8)
 
 end

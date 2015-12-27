@@ -20,7 +20,7 @@ function squareNetwork(width::Int = 5; distance::Float64=100.)
         end
 
         #Create nodes
-        nodes = Array{Nodes}(width^2)
+        nodes = Array{Node}(width^2)
         for i in 1:width, j in 1:width
             nodes[coordToLoc(i,j)] = Node((i-(width+1)/2)*distance, (j-(width+1)/2)*distance)
         end

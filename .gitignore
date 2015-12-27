@@ -2,3 +2,6 @@
 *.ipynb
 *.DS_Store
 *.jld
+*.jl.cov
+*.jl.*.cov
+*.jl.mem
