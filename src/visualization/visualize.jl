@@ -11,11 +11,13 @@ function visualize(n::Network)
     end
 
     function createRoads()
-        roads = Array{Line}(length(n.roads))
-        for (i,r) in enumerate(edges(n.graph))
-            road = Line(positions[src(r)],positions[dst(r)],node_radius/2)
-            set_fillcolor(road,SFML.blue)
-            roads[i] = road
+        roads = Line[]
+        typecolors= [Color(0,255,0), Color(55,200,0), Color(105,150,0), Color(150,105,0),
+                 Color(0,0,125), Color(0,0,125), Color(0,0,125), Color(0,0,125)]
+        for ((s,d),r) in n.roads
+            road = Line(positions[s],positions[d],node_radius/2)
+            set_fillcolor(road,typecolors[r.roadType])
+            push!(roads,road)
         end
         return roads
     end
@@ -24,20 +26,20 @@ function visualize(n::Network)
         positions = Array{Vector2f}(length(n.nodes))
 
         for i in 1:length(positions)
-           positions[i] = Vector2f(n.nodes[i].x,n.nodes[i].y)
+           positions[i] = Vector2f(n.nodes[i].x,-n.nodes[i].y)
         end
         # KD-tree with positions
         dataPos = Array{Float64,2}(2,length(positions))
         for (i,p) in enumerate(positions)
            dataPos[1,i] = p.x
-           dataPos[2,i] = p.y
+           dataPos[2,i] = -p.y
         end
         return positions, KDTree(dataPos)
     end
 
     function updateSelectedNode(x::Int32, y::Int32)
         coord = pixel2coords(window,Vector2i(x,y))
-        id = knn(kdtree,[coord.x,coord.y],1)[1][1]
+        id = knn(kdtree,[coord.x,-coord.y],1)[1][1]
         set_fillcolor(nodes[selectedNode], SFML.Color(0,0,0,150))
         set_fillcolor(nodes[id], SFML.red)
         selectedNode = id
@@ -58,6 +60,7 @@ function visualize(n::Network)
     positions, kdtree = getPositions()
 
     minX, maxX, minY, maxY = boundingBox(Tuple{Float64,Float64}[(p.x,p.y) for p in positions])
+    networkLength = max(maxX-minX, maxY-minY)
     viewWidth = max(maxX-minX, (maxY-minY)*window_w/window_h)
     viewHeigth = max(maxY-minY, (maxX-minX)*window_h/window_w)
     view = View(Vector2f((minX+maxX)/2,(minY+maxY)/2), Vector2f(viewWidth, viewHeigth))
@@ -76,7 +79,7 @@ function visualize(n::Network)
             end
             if get_type(event) == EventType.RESIZED
                 size = get_size(event)
-                set_size(view, Vector2f(size.width, size.height))
+                set_size(view, Vector2f(size.width * zoomLevel, size.height * zoomLevel))
                 zoom(view, zoomLevel)
             end
             if get_type(event) == EventType.KEY_PRESSED && (get_key(event).key_code == KeyCode.ESCAPE || get_key(event).key_code == KeyCode.Q)
@@ -87,16 +90,16 @@ function visualize(n::Network)
             end
         end
 		if is_key_pressed(KeyCode.LEFT)
-			move(view, Vector2f(-600*frameTime*zoomLevel,0.))
+			move(view, Vector2f(-networkLength/3*frameTime*zoomLevel,0.))
 		end
         if is_key_pressed(KeyCode.RIGHT)
-			move(view, Vector2f(600*frameTime*zoomLevel,0.))
+			move(view, Vector2f(networkLength/3*frameTime*zoomLevel,0.))
 		end
         if is_key_pressed(KeyCode.UP)
-			move(view, Vector2f(0.,-600*frameTime*zoomLevel))
+			move(view, Vector2f(0.,-networkLength/3*frameTime*zoomLevel))
 		end
         if is_key_pressed(KeyCode.DOWN)
-			move(view, Vector2f(0.,600*frameTime*zoomLevel))
+			move(view, Vector2f(0.,networkLength/3*frameTime*zoomLevel))
 		end
         if is_key_pressed(KeyCode.Z)
             zoom(view, 0.7^frameTime)

@@ -63,5 +63,5 @@ end
 """
 function toENU(lon::Float64, lat::Float64, center::Tuple{Float64,Float64})
     enu = Geodesy.ENU(Geodesy.LLA(lat,lon), Geodesy.LLA(center[2],center[1]))
-    return enu.east, -enu.north
+    return enu.east, enu.north
 end
