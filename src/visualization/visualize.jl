@@ -79,7 +79,9 @@ function visualize(n::Network)
             end
             if get_type(event) == EventType.RESIZED
                 size = get_size(event)
-                set_size(view, Vector2f(size.width * zoomLevel, size.height * zoomLevel))
+                viewWidth = max(maxX-minX, (maxY-minY)*window_w/window_h)
+                viewHeigth = max(maxY-minY, (maxX-minX)*window_h/window_w)
+                set_size(view, Vector2f(viewWidth, viewHeigth))
                 zoom(view, zoomLevel)
             end
             if get_type(event) == EventType.KEY_PRESSED && (get_key(event).key_code == KeyCode.ESCAPE || get_key(event).key_code == KeyCode.Q)
@@ -90,24 +92,24 @@ function visualize(n::Network)
             end
         end
 		if is_key_pressed(KeyCode.LEFT)
-			move(view, Vector2f(-networkLength/3*frameTime*zoomLevel,0.))
+			move(view, Vector2f(-networkLength/2*frameTime*zoomLevel,0.))
 		end
         if is_key_pressed(KeyCode.RIGHT)
-			move(view, Vector2f(networkLength/3*frameTime*zoomLevel,0.))
+			move(view, Vector2f(networkLength/2*frameTime*zoomLevel,0.))
 		end
         if is_key_pressed(KeyCode.UP)
-			move(view, Vector2f(0.,-networkLength/3*frameTime*zoomLevel))
+			move(view, Vector2f(0.,-networkLength/2*frameTime*zoomLevel))
 		end
         if is_key_pressed(KeyCode.DOWN)
-			move(view, Vector2f(0.,networkLength/3*frameTime*zoomLevel))
+			move(view, Vector2f(0.,networkLength/2*frameTime*zoomLevel))
 		end
         if is_key_pressed(KeyCode.Z)
-            zoom(view, 0.7^frameTime)
-            zoomLevel = get_size(view).x/get_size(window).x
+            zoom(view, 0.6^frameTime)
+            zoomLevel = get_size(view).x/viewWidth
 		end
 		if is_key_pressed(KeyCode.X)
-			zoom(view, 1/(0.7^frameTime))
-            zoomLevel = get_size(view).x/get_size(window).x
+			zoom(view, 1/(0.6^frameTime))
+            zoomLevel = get_size(view).x/viewWidth
 		end
         set_view(window,view)
         clear(window, SFML.white)

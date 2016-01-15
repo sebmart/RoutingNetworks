@@ -13,7 +13,7 @@ export loadTemplate, saveTemplate, createTemplates
 export squareNetwork, urbanNetwork
 
 #routing
-export RoutingTimes, routingDistances, getRoutingTimes, getPath
+export RoutingTimes, routingDistances, getRoutingTimes, getPath, shortestPaths!
 
 #visualization
 export visualize

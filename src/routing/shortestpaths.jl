@@ -15,9 +15,11 @@ function shortestPaths!(r::RoutingTimes)
     parents  = zeros(Int,nv(g),nv(g))
 
     for orig in 1:nv(g)
-        d = dijkstra_shortest_paths(g,i, distmx=r.times)
-        fullTimes[i,:] = d.dists
-        parents[i,:] = d.parents        
+        d = dijkstra_shortest_paths(g, orig, r.times)
+        fullTimes[orig,:] = d.dists
+        parents[orig,:] = d.parents
     end
-
+    r.fullTimes=fullTimes
+    r.previousNode=parents
+    return r
 end
