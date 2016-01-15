@@ -45,3 +45,27 @@ function routingDistances(n::Network)
         dists[i,j] = r.distance
     end
 end
+
+"""
+    Gives access to the timing matrix of the graph after path computation
+"""
+function getRoutingTimes(r::RoutingTimes)
+    if !isdefined(r.fullTimes)
+        error("The paths have not been computed yet")
+    end
+    return r.fullTimes
+end
+
+
+"""
+    return path between origin and destination (list of node ids)
+"""
+function getPath(r::RoutingTimes, orig::Int, dest::Int)
+    path = Int[dest]
+    lastNode = dest
+    while lastNode != orig
+        lastNode = p.previous[orig,lastNode]
+        push!(path, lastNode)
+    end
+    return reverse(path)
+end
