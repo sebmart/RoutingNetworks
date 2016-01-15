@@ -1,3 +1,7 @@
+###################################################
+## Tools to subset networks
+###################################################
+
 """
 subset the network: only keep the given nodes
 """
