@@ -28,7 +28,7 @@ end
 """
 function queryOsmPolygon(poly::Vector{Tuple{Float64,Float64}}; osmfile="")
     (minLon,maxLon,minLat,maxLat) = boundingBox(poly)
-    n = queryFromCoordinates(minLon,maxLon,minLat,maxLat,osmfile=osmfile)
+    n = queryOsmBox(minLon,maxLon,minLat,maxLat,osmfile=osmfile)
     n = subsetNetwork(n,inPolygon(n,poly))
     n = removeNodes(n,singleNodes(n))
 end

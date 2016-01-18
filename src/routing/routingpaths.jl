@@ -1,11 +1,13 @@
 ###################################################
-## Store timings in a network
+## RoutingPaths type
 ###################################################
 
 """
-    Stores timing information for a network
+    Stores path information in network
+    - for now, just compute the shortest paths
+    - if no_sp = true, returns an incomplete object (in case want to run shortest paths later)
 """
-type RoutingTimes
+type RoutingPaths
     # Required attributes
     "A reference to the network"
     network::Network
@@ -15,31 +17,46 @@ type RoutingTimes
 
     # optional attributes
     "if computed, contains timings from anywhere to anywhere"
-    fullTimes::AbstractArray{Float64,2}
+    pathTimes::AbstractArray{Float64,2}
     "if computed, contains information to recontruct the paths"
-    previousNode::AbstractArray{Int64,2}
+    pathPrevious::AbstractArray{Int64,2}
 
     "Constructor: reference to network and timing information"
-    function RoutingTimes(n::Network, times::AbstractArray{Float64,2})
-        obj = new()
-        obj.network = n
+    function RoutingPaths(n::Network, times::AbstractArray{Float64,2}; no_sp=false)
+        # a few tests
         if size(times) != (length(n.nodes),length(n.nodes))
             error("The given timings do not fit the network")
         end
-        obj.times = times
         for (i,j) in keys(n.roads)
-            if obj.times[i,j] < 0.
-                error("$i => $j : negative timing $(obj.times[i,j])")
+            if times[i,j] < 0.
+                error("$i => $j : negative timing $(times[i,j])")
+            end
+        end
+        obj = new()
+        obj.network = n
+        obj.times = times
+
+        if !no_sp
+            if nworkers() > 1
+                parallelShortestPaths!(obj)
+            else
+                shortestPaths!(obj)
             end
         end
         return obj
     end
 end
 
-function Base.show(io::IO, r::RoutingTimes)
+"""
+    Without timings, uses distances
+"""
+RoutingPaths(n::Network) = RoutingPaths(n,roadDistances(n))
+
+
+function Base.show(io::IO, r::RoutingPaths)
     g = r.network.graph
     println("Network routing times")
-    if isdefined(r,:fullTimes)
+    if isdefined(r,:pathTimes)
         println("with path and time for all $(nv(g)*(nv(g)-1)) possible trips")
     else
         println("for all $(ne(g)) roads (no path computed yet)")
@@ -50,19 +67,19 @@ end
 """
     Returns a RoutingTimes object where the "timings" are the distances
 """
-function routingDistances(n::Network)
+function roadDistances(n::Network)
     dists = spzeros(length(n.nodes), length(n.nodes))
     for ((i,j),r) in n.roads
         dists[i,j] = r.distance
     end
-    return RoutingTimes(n,dists)
+    return dists
 end
 
 """
     Gives access to the timing matrix of the graph after path computation
 """
-function getRoutingTimes(r::RoutingTimes)
-    if !isdefined(r,:fullTimes)
+function getPathTimes(r::RoutingPaths)
+    if !isdefined(r,:pathTimes)
         error("The paths have not been computed yet")
     end
     return r.fullTimes
@@ -72,11 +89,11 @@ end
 """
     Returns path between origin and destination (list of node ids)
 """
-function getPath(r::RoutingTimes, orig::Int, dest::Int)
+function getPath(r::RoutingPaths, orig::Int, dest::Int)
     path = Int[dest]
     lastNode = dest
     while lastNode != orig
-        lastNode = r.previousNode[orig,lastNode]
+        lastNode = r.pathPrevious[orig,lastNode]
         push!(path, lastNode)
     end
     return path[end:-1:1]

@@ -9,11 +9,11 @@ export Node, Road, Network
 #creation
 export osm2network, subsetNetwork, removeNodes, singleNodes, inPolygon, roadTypeSubset
 export stronglyConnected, intersections, queryOsmBox, queryOsmPolygon
-export loadTemplate, saveTemplate, createTemplates
+export loadTemplate, saveTemplate, isTemplate
 export squareNetwork, urbanNetwork
 
 #routing
-export RoutingTimes, routingDistances, getRoutingTimes, getPath, shortestPaths!
+export RoutingPaths, roadDistances, getPathTimes, getPath, shortestPaths!
 export parallelShortestPaths!
 
 #visualization
@@ -30,7 +30,7 @@ include("creation/templates.jl")
 include("creation/square.jl")
 include("creation/urban.jl")
 
-include("routing/routingtimes.jl")
+include("routing/routingpaths.jl")
 include("routing/shortestpaths.jl")
 
 include("visualization/visualize.jl")

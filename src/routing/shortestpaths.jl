@@ -5,22 +5,22 @@
 """
 Compute shortest path using the given timings
 """
-function shortestPaths!(r::RoutingTimes)
+function shortestPaths!(r::RoutingPaths)
     g = r.network.graph
     if !is_strongly_connected(g)
         error("The network needs to be strongly connected")
     end
 
-    fullTimes = zeros(nv(g), nv(g))
+    pathTimes = zeros(nv(g), nv(g))
     parents  = zeros(Int,nv(g),nv(g))
 
     for orig in 1:nv(g)
         d = dijkstra_shortest_paths(g, orig, r.times)
-        fullTimes[orig,:] = d.dists
+        pathTimes[orig,:] = d.dists
         parents[orig,:] = d.parents
     end
-    r.fullTimes=fullTimes
-    r.previousNode=parents
+    r.pathTimes=pathTimes
+    r.pathPrevious=parents
     return r
 end
 
@@ -29,11 +29,11 @@ Compute shortest path using the given timings
 - parallel version, uses all available processors
 - if batch_number is provided, use pmap method
 """
-function parallelShortestPaths!(r::RoutingTimes; batch_number::Int=0)
+function parallelShortestPaths!(r::RoutingPaths; batch_number::Int=0)
     if batch_number > 0
         return parallelShortestPaths2(r,batch_number)
     end
-    
+
     if nprocs() <= 1
         println("Only one thread: use shortestPaths! instead")
     end
@@ -44,16 +44,16 @@ function parallelShortestPaths!(r::RoutingTimes; batch_number::Int=0)
         error("The network needs to be strongly connected")
     end
 
-    fullTimes = SharedArray(Float64, (nv(g), nv(g)))
+    pathTimes = SharedArray(Float64, (nv(g), nv(g)))
     parents  = SharedArray(Int,(nv(g),nv(g)))
 
     @sync @parallel for orig in 1:nv(g)
         d = dijkstra_shortest_paths(g, orig, r.times)
-        fullTimes[orig,:] = d.dists
+        pathTimes[orig,:] = d.dists
         parents[orig,:] = d.parents
     end
-    r.fullTimes=fullTimes
-    r.previousNode=parents
+    r.pathTimes=pathTimes
+    r.pathPrevious=parents
     return r
 end
 
@@ -61,7 +61,7 @@ end
 """
  another version, using pmap after grouping : usualy slower for now
 """
-function parallelShortestPaths2!(r::RoutingTimes, batch_number::Int=10)
+function parallelShortestPaths2!(r::RoutingPaths, batch_number::Int=10)
 
     if nworkers() <= 1
         println("Only one thread: use shortestPaths! instead")
@@ -71,7 +71,7 @@ function parallelShortestPaths2!(r::RoutingTimes, batch_number::Int=10)
         error("The network needs to be strongly connected")
     end
 
-    fullTimes = SharedArray(Float64, (nv(g), nv(g)))
+    pathTimes = SharedArray(Float64, (nv(g), nv(g)))
     parents  = SharedArray(Int,(nv(g),nv(g)))
 
     @sync for w in workers()
@@ -81,7 +81,7 @@ function parallelShortestPaths2!(r::RoutingTimes, batch_number::Int=10)
     function range_dijkstra(range)
         for orig in range
             d = dijkstra_shortest_paths(r.network.graph, orig, r.times)
-            fullTimes[orig,:] = d.dists
+            pathTimes[orig,:] = d.dists
             parents[orig,:] = d.parents
         end
     end
@@ -90,7 +90,7 @@ function parallelShortestPaths2!(r::RoutingTimes, batch_number::Int=10)
 
     pmap(range_dijkstra, ranges)
 
-    r.fullTimes=fullTimes
-    r.previousNode=parents
+    r.pathTimes=sdata(pathTimes)
+    r.pathPrevious=sdata(parents)
     return r
 end
