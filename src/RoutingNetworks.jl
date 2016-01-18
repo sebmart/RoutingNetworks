@@ -14,6 +14,7 @@ export squareNetwork, urbanNetwork
 
 #routing
 export RoutingTimes, routingDistances, getRoutingTimes, getPath, shortestPaths!
+export parallelShortestPaths!
 
 #visualization
 export visualize
