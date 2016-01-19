@@ -98,3 +98,12 @@ function getPath(r::RoutingPaths, orig::Int, dest::Int)
     end
     return path[end:-1:1]
 end
+
+"""
+    Returns the given path time (just sum the link times on path)
+"""
+function pathTime(r::RoutingPaths, path::Vector{Int})
+    time = 0.
+    for i in 1:length(path) - 1
+        time+=r.times[path[i],path[i+1]]
+    end 
