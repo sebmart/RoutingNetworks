@@ -57,9 +57,9 @@ function Base.show(io::IO, r::RoutingPaths)
     g = r.network.graph
     println("Network routing times")
     if isdefined(r,:pathTimes)
-        println("with path and time for all $(nv(g)*(nv(g)-1)) possible trips")
+        println(io, "with path and time for all $(nv(g)*(nv(g)-1)) possible trips")
     else
-        println("for all $(ne(g)) roads (no path computed yet)")
+        println(io, "for all $(ne(g)) roads (no path computed yet)")
     end
 end
 
@@ -82,7 +82,7 @@ function getPathTimes(r::RoutingPaths)
     if !isdefined(r,:pathTimes)
         error("The paths have not been computed yet")
     end
-    return r.fullTimes
+    return r.pathTimes
 end
 
 

@@ -7,7 +7,7 @@
  - all road same type (5)
 
 """
-function squareNetwork(width::Int = 5; distance::Float64=100.)
+function squareNetwork(width::Int = 5; distance::Float64=200.)
         #nodes are indexed as follow :
         #  12
         #  34 (for width=2)

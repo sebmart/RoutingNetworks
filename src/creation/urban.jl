@@ -8,7 +8,7 @@ Elaborate network, depending on parameters
 - nSub  = number of city's suburb (half the city width)
 Represent whole city, with commuting effects
 """
-function urbanNetwork(width::Int=8; distance::Float64=100.)
+function urbanNetwork(width::Int=8; distance::Float64=200.)
     subwidth = div(width,2)
 
     function coordToLoc(i::Int, j::Int, c::Int)
