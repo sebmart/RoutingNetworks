@@ -106,4 +106,6 @@ function pathTime(r::RoutingPaths, path::Vector{Int})
     time = 0.
     for i in 1:length(path) - 1
         time+=r.times[path[i],path[i+1]]
-    end 
+    end
+    return time
+end
