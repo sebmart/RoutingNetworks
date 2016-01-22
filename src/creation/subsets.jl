@@ -141,7 +141,7 @@ function intersections(n::Network)
                 else
                     add_edge!(g2, i, revIndex[k])
                 end
-                roads[i,revIndex[k]] = Road(dist,roadType)
+                roads[i,revIndex[k]] = Road(i,revIndex[k],dist,roadType)
             end
 
         end

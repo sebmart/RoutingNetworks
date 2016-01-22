@@ -7,6 +7,8 @@ end
 Node(x::Float64,y::Float64) = Node(x,y,0.,0.)
 
 immutable Road
+  orig::Int
+  dest::Int
   # Distance in meters
   distance::Float64
   roadType::Int

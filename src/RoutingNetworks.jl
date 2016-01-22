@@ -14,12 +14,11 @@ export squareNetwork, urbanNetwork
 
 #routing
 export RoutingPaths, roadDistances, getPathTimes, getPath, shortestPaths!
-export parallelShortestPaths!
+export parallelShortestPaths!, pathRoads
 
 #visualization
-export NetworkVisualizer, NodeInfo, visualize, visualInit, visualEvent, visualUpdate
-export copyVisualData
-
+export NetworkVisualizer, NodeInfo, ShowPath
+export visualize, visualInit, visualEvent, visualUpdate, copyVisualData
 
 include("network.jl")
 
@@ -33,9 +32,11 @@ include("creation/urban.jl")
 
 include("routing/routingpaths.jl")
 include("routing/shortestpaths.jl")
+include("routing/tools.jl")
 
 include("visualization/visualize.jl")
 include("visualization/nodeinfo.jl")
+include("visualization/showpath.jl")
 
 include("tools/geometry.jl")
 end

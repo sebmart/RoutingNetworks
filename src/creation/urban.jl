@@ -45,7 +45,8 @@ function urbanNetwork(width::Int=8; distance::Float64=200.)
             urban.nodes[coordToLoc(k,i)] =  Node(x,y)
         end
         for ((l,m),r) in suburbs[i].roads
-            urban.roads[coordToLoc(l,i), coordToLoc(m,i)] = r
+            n1,n2 = coordToLoc(l,i), coordToLoc(m,i)
+            urban.roads[n1,n2] = Road(n1,n2, r.distance, r.roadType)
         end
     end
 
@@ -60,8 +61,7 @@ function urbanNetwork(width::Int=8; distance::Float64=200.)
         end
         for ((l,m),r) in suburbs[i].roads
             n1, n2 = coordToLoc(l,i), coordToLoc(m,i)
-            urban.roads[n1,n2] = r
-            urban.roads[n2,n1] = r
+            urban.roads[n1,n2] = Road(n1, n2, r.distance, r.roadType)
         end
     end
 
@@ -89,26 +89,24 @@ function urbanNetwork(width::Int=8; distance::Float64=200.)
     for (c1,a1,b1,c2,a2,b2,t) in connections
         # if rand() <= 0.7
             n1, n2 = coordToLoc(a1,b1,c1), coordToLoc(a2,b2,c2)
-            r = Road(distanceCoord(urban.nodes[n1],urban.nodes[n2]),t)
-            urban.roads[n1,n2] = r
-            urban.roads[n2,n1] = r
+            d = distanceCoord(urban.nodes[n1],urban.nodes[n2])
+            urban.roads[n1,n2] = Road(n1,n2,d,t)
+            urban.roads[n2,n1] = Road(n2,n1,d,t)
         # end
     end
 
     #Add highway around downtown
     for i in 1:(width-1), j in [1,width]
         n1, n2 = coordToLoc(j,i,0), coordToLoc(j,i+1,0)
-        r = Road(distanceCoord(urban.nodes[n1],urban.nodes[n2]),1)
-        urban.roads[n1,n2] = r
-        urban.roads[n2,n1] = r
+        d = distanceCoord(urban.nodes[n1],urban.nodes[n2])
+        urban.roads[n1,n2] = Road(n1,n2,d,1)
+        urban.roads[n2,n1] = Road(n2,n1,d,1)
 
         n1, n2 = coordToLoc(i,j,0), coordToLoc(i+1,j,0)
-        r = Road(distanceCoord(urban.nodes[n1],urban.nodes[n2]),1)
-        urban.roads[n1,n2] = r
-        urban.roads[n2,n1] = r
+        d = distanceCoord(urban.nodes[n1],urban.nodes[n2])
+        urban.roads[n1,n2] = Road(n1,n2,d,1)
+        urban.roads[n2,n1] = Road(n2,n1,d,1)
     end
 
     return Network(urban.nodes,urban.roads)
-
-
 end

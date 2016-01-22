@@ -10,7 +10,7 @@
     has to implement, automatically initialized
     - attribute `window::RenderWindow`
     - attribute `nodes::Vector{CircleShape}`
-    - attribute `roads::Vector{Line}`
+    - attribute `roads::Dict{Tuple{Int,Int},Line}`
 
     can implement
     - method `visualInit` => initialize things
@@ -71,13 +71,13 @@ function visualize(v::NetworkVisualizer)
 
 
     #create roads
-    v.roads = Line[]
+    v.roads = Dict{Tuple{Int,Int},Line}()
     typecolors= [Color(0,255,0), Color(55,200,0), Color(105,150,0), Color(150,105,0),
              Color(0,0,125), Color(0,0,125), Color(0,0,125), Color(0,0,125)]
-    for ((s,d),r) in n.roads
-        road = Line(positions[s],positions[d],node_radius/2)
+    for ((o,d),r) in n.roads
+        road = Line(positions[o],positions[d],node_radius/2)
         set_fillcolor(road,typecolors[r.roadType])
-        push!(v.roads,road)
+        v.roads[o,d] = road
     end
 
 
@@ -141,7 +141,7 @@ function visualize(v::NetworkVisualizer)
 		end
         set_view(v.window,view)
         clear(v.window, SFML.white)
-        for road in v.roads
+        for road in values(v.roads)
             draw(v.window,road)
         end
         for node in v.nodes

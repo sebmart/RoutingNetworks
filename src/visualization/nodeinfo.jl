@@ -11,8 +11,7 @@ type NodeInfo <: NetworkVisualizer
     network::Network
     window::RenderWindow
     nodes::Vector{CircleShape}
-    roads::Vector{Line}
-
+    roads::Dict{Tuple{Int,Int},Line}
 
     "node positions KD-tree"
     tree::KDTree

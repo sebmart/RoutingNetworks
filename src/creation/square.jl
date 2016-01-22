@@ -30,14 +30,14 @@ function squareNetwork(width::Int = 5; distance::Float64=200.)
             #Vertical roads
             n1 = coordToLoc(i,j); n2 = coordToLoc(i+1,j);
             dist = distanceCoord(nodes[n1],nodes[n2]);
-            roads[(n1,n2)] = Road(dist, 5)
-            roads[(n2,n1)] = Road(dist, 5)
+            roads[(n1,n2)] = Road(n1,n2,dist, 5)
+            roads[(n2,n1)] = Road(n1,n2,dist, 5)
 
             #Horizontal roads
             n1 = coordToLoc(j,i); n2 = coordToLoc(j,i+1)
             dist = distanceCoord(nodes[n1],nodes[n2]);
-            roads[(n1,n2)] = Road(dist, 5)
-            roads[(n2,n1)] = Road(dist, 5)
+            roads[(n1,n2)] = Road(n1,n2,dist, 5)
+            roads[(n2,n1)] = Road(n1,n2,dist, 5)
         end
         return Network(nodes, roads)
 end
