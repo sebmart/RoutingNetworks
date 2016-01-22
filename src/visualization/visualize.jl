@@ -108,6 +108,7 @@ function visualize(v::NetworkVisualizer)
             end
             if get_type(event) == EventType.RESIZED
                 size = get_size(event)
+                window_w, window_h = size.width, size.height
                 viewWidth = max(maxX-minX, (maxY-minY)*window_w/window_h)
                 viewHeigth = max(maxY-minY, (maxX-minX)*window_h/window_w)
                 set_size(view, Vector2f(viewWidth, viewHeigth))
