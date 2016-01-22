@@ -1,81 +1,110 @@
-function visualize(n::Network)
+###################################################
+## visualize.jl
+## visualize network (made to be extended)
+###################################################
 
-    function createNodes()
-        nodes = CircleShape[CircleShape() for i in 1:length(n.nodes)]
-        for (i, no) in enumerate(nodes)
-            set_radius(no, node_radius)
-            set_fillcolor(no, SFML.Color(0,0,0,150))
-            set_position(no, positions[i] - Vector2f(node_radius,node_radius))
-        end
-        return nodes
-    end
+"""
+    `NetworkVisualizer` : abstract type that represents visualization in a network
+    has to implement ands initialize:
+    - attribute `network::Network`
+    has to implement, automatically initialized
+    - attribute `window::RenderWindow`
+    - attribute `nodes::Vector{CircleShape}`
+    - attribute `roads::Vector{Line}`
 
-    function createRoads()
-        roads = Line[]
-        typecolors= [Color(0,255,0), Color(55,200,0), Color(105,150,0), Color(150,105,0),
-                 Color(0,0,125), Color(0,0,125), Color(0,0,125), Color(0,0,125)]
-        for ((s,d),r) in n.roads
-            road = Line(positions[s],positions[d],node_radius/2)
-            set_fillcolor(road,typecolors[r.roadType])
-            push!(roads,road)
-        end
-        return roads
-    end
+    can implement
+    - method `visualInit` => initialize things
+    - method `visualEvent`  => receive one event (may be 0 or several per frame)
+    - method `visualUpdate` => called each frame, to update and draw objects
+"""
+abstract NetworkVisualizer
 
-    function getPositions()
-        positions = Array{Vector2f}(length(n.nodes))
+"""
+    `visualInit` initialize things
+"""
+function visualInit(v::NetworkVisualizer)
+end
 
-        for i in 1:length(positions)
-           positions[i] = Vector2f(n.nodes[i].x,-n.nodes[i].y)
-        end
-        # KD-tree with positions
-        dataPos = Array{Float64,2}(2,length(positions))
-        for (i,p) in enumerate(positions)
-           dataPos[1,i] = p.x
-           dataPos[2,i] = -p.y
-        end
-        return positions, KDTree(dataPos)
-    end
+"""
+    `visualEvent` => called each frame, is given the events
+"""
+function visualEvent(v::NetworkVisualizer, event::Event)
+end
 
-    function updateSelectedNode(x::Int32, y::Int32)
-        coord = pixel2coords(window,Vector2i(x,y))
-        id = knn(kdtree,[coord.x,-coord.y],1)[1][1]
-        set_fillcolor(nodes[selectedNode], SFML.Color(0,0,0,150))
-        set_fillcolor(nodes[id], SFML.red)
-        selectedNode = id
-        set_title(window, "Node : $id in: $(in_neighbors(n.graph,id)) out: $(out_neighbors(n.graph,id))")
-    end
+"""
+    `updateVisual` => called each frame, to update and draw objects, is given frame-time
+"""
+function visualUpdate(v::NetworkVisualizer,frameTime::Float64)
+end
 
+"""
+    `copyVisualData` : copy `ref` visual data into `v`
+"""
+function copyVisualData(ref::NetworkVisualizer,v::NetworkVisualizer)
+    v.window = ref.window
+    v.nodes  = ref.nodes
+    v.roads  = ref.roads
+end
+
+"""
+    `visualize`: visualize a network
+    - specifics of the visualization are given by NetworkVisualizer object
+    - if given network, calls `NodeInfo` visualizer is chosen
+"""
+function visualize(v::NetworkVisualizer)
+    n = v.network
     node_radius = 10.
+
+    # create position vectors (inverse y axe for plotting)
+    positions = Array{Vector2f}(length(n.nodes))
+    for i in 1:length(positions)
+       positions[i] = Vector2f(n.nodes[i].x,-n.nodes[i].y)
+    end
+
+    #create nodes
+    v.nodes = CircleShape[CircleShape() for i in 1:length(n.nodes)]
+    for (i, no) in enumerate(v.nodes)
+        set_radius(no, node_radius)
+        set_fillcolor(no, SFML.Color(0,0,0,150))
+        set_position(no, positions[i] - Vector2f(node_radius,node_radius))
+    end
+
+
+    #create roads
+    v.roads = Line[]
+    typecolors= [Color(0,255,0), Color(55,200,0), Color(105,150,0), Color(150,105,0),
+             Color(0,0,125), Color(0,0,125), Color(0,0,125), Color(0,0,125)]
+    for ((s,d),r) in n.roads
+        road = Line(positions[s],positions[d],node_radius/2)
+        set_fillcolor(road,typecolors[r.roadType])
+        push!(v.roads,road)
+    end
+
+
+
     # Defines the window, an event listener, and view
     window_w, window_h = 1200,1200
-    window = RenderWindow("Network Visualization", window_w, window_h)
-    set_framerate_limit(window, 60)
+    v.window = RenderWindow("Network Visualization", window_w, window_h)
+    set_framerate_limit(v.window, 60)
     event = Event()
 
-
-
-
-
-    positions, kdtree = getPositions()
-
+    # Set up the initial view
     minX, maxX, minY, maxY = boundingBox(Tuple{Float64,Float64}[(p.x,p.y) for p in positions])
     networkLength = max(maxX-minX, maxY-minY)
     viewWidth = max(maxX-minX, (maxY-minY)*window_w/window_h)
     viewHeigth = max(maxY-minY, (maxX-minX)*window_h/window_w)
     view = View(Vector2f((minX+maxX)/2,(minY+maxY)/2), Vector2f(viewWidth, viewHeigth))
     zoomLevel = 1.0
-    nodes = createNodes()
-    roads = createRoads()
-    selectedNode = 1
 
+    # init visualizer
+    visualInit(v)
 
     clock = Clock()
-    while isopen(window)
-        frameTime = as_seconds(restart(clock))
-        while pollevent(window, event)
+    while isopen(v.window)
+        frameTime = Float64(as_seconds(restart(clock)))
+        while pollevent(v.window, event)
             if get_type(event) == EventType.CLOSED
-                close(window)
+                close(v.window)
             end
             if get_type(event) == EventType.RESIZED
                 size = get_size(event)
@@ -85,11 +114,10 @@ function visualize(n::Network)
                 zoom(view, zoomLevel)
             end
             if get_type(event) == EventType.KEY_PRESSED && (get_key(event).key_code == KeyCode.ESCAPE || get_key(event).key_code == KeyCode.Q)
-                close(window)
+                close(v.window)
             end
-            if get_type(event) == EventType.MOUSE_BUTTON_PRESSED && get_mousebutton(event).button == MouseButton.LEFT
-                updateSelectedNode(get_mousebutton(event).x, get_mousebutton(event).y)
-            end
+            # additional event processing
+            visualEvent(v,event)
         end
 		if is_key_pressed(KeyCode.LEFT)
 			move(view, Vector2f(-networkLength/2*frameTime*zoomLevel,0.))
@@ -111,15 +139,20 @@ function visualize(n::Network)
 			zoom(view, 1/(0.6^frameTime))
             zoomLevel = get_size(view).x/viewWidth
 		end
-        set_view(window,view)
-        clear(window, SFML.white)
-        for road in roads
-            draw(window,road)
+        set_view(v.window,view)
+        clear(v.window, SFML.white)
+        for road in v.roads
+            draw(v.window,road)
         end
-        for node in nodes
-            draw(window,node)
+        for node in v.nodes
+            draw(v.window,node)
         end
 
-        display(window)
+        # additional updates
+        visualUpdate(v, frameTime)
+
+        display(v.window)
     end
 end
+
+visualize(n::Network) = visualize(NodeInfo(n))

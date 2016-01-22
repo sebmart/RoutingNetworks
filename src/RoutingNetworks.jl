@@ -17,7 +17,8 @@ export RoutingPaths, roadDistances, getPathTimes, getPath, shortestPaths!
 export parallelShortestPaths!
 
 #visualization
-export visualize
+export NetworkVisualizer, NodeInfo, visualize, visualInit, visualEvent, visualUpdate
+export copyVisualData
 
 
 include("network.jl")
@@ -34,6 +35,7 @@ include("routing/routingpaths.jl")
 include("routing/shortestpaths.jl")
 
 include("visualization/visualize.jl")
+include("visualization/nodeinfo.jl")
 
 include("tools/geometry.jl")
 end
