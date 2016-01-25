@@ -20,6 +20,9 @@ export parallelShortestPaths!, pathRoads
 export NetworkVisualizer, NodeInfo, ShowPath
 export visualize, visualInit, visualEvent, visualUpdate, copyVisualData
 
+#tools
+export boundingBox, distanceGeo, distanceCoord, pointInsidePolygon
+
 include("network.jl")
 
 
