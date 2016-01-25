@@ -45,7 +45,7 @@ end
 visible{T <: OSM.OSMElement}(obj::T) = (get(obj.tags, "visible", "") != "false")
 services(w::OSM.Way) = (get(w.tags,"highway", "") == "services")
 reverse(w::OSM.Way) = (get(w.tags,"oneway", "") == "-1")
-toradians(degree::Float64) = degree * π / 180.0
+toradians(degree::AbstractFloat) = degree * π / 180.0
 
 
 

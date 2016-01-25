@@ -69,7 +69,7 @@ Returns nodes that are inside a Polygon
 function inPolygon(n::Network, poly::Vector{Tuple{Float64,Float64}})
     inPoly = Int[]
     for i in vertices(n.graph)
-        if point_inside_polygon(n.nodes[i].lat, n.nodes[i].lon, poly)
+        if pointInsidePolygon(n.nodes[i].lon, n.nodes[i].lat, poly)
             push!(inPoly,i)
         end
     end

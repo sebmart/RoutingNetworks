@@ -5,7 +5,7 @@
 """
     Return bounding box of polygon/ list of points
 """
-function boundingBox(poly::Vector{Tuple{Float64,Float64}})
+function boundingBox{T<:AbstractFloat}(poly::Vector{Tuple{T,T}})
     minX = Inf; maxX = -Inf; minY = Inf; maxY = -Inf
     for (x,y) in poly
         minX = min(minX,x)
@@ -19,11 +19,13 @@ end
 """
     Distance between the two points in meters (true geodesic distance from LLA coordinates)
 """
-function distanceGeo(pt1::Node, pt2::Node)
-    dLat = toradians(pt2.lat - pt1.lat)
-    dLon = toradians(pt2.lon - pt1.lon)
-    lat1 = toradians(pt1.lat)
-    lat2 = toradians(pt2.lat)
+distanceGeo(pt1::Node, pt2::Node) = distanceGeo(pt1.lon, pt1.lat, pt2.lon, pt2.lat)
+
+function distanceGeo{T<:AbstractFloat}(lon1::T, lat1::T, lon2::T, lat2::T)
+    dLat = toradians(lat2 - lat1)
+    dLon = toradians(lon2 - lon1)
+    lat1 = toradians(lat1)
+    lat2 = toradians(lat2)
     a = sin(dLat/2)^2 + sin(dLon/2)^2 * cos(lat1) * cos(lat2)
     2.0 * atan2(sqrt(a), sqrt(1-a)) * 6373.0 * 1000
 end
@@ -31,14 +33,16 @@ end
 """
     Distance between the two points in meters (from coordinates)
 """
-function distanceCoord(pt1::Node, pt2::Node)
-    return sqrt((pt2.x-pt1.x)^2+(pt2.y-pt1.y)^2)
+distanceCoord(pt1::Node, pt2::Node) = distanceCoord(pt1.x, pt1.y, pt2.x, pt2.y)
+
+function distanceCoord{T<:AbstractFloat}(x1::T, y1::T, x2::T, y2::T)
+    return sqrt((x2-x1)^2+(y2-y1)^2)
 end
 
 """
     Check is a point is inside a polygon
 """
-function point_inside_polygon(x::Float64,y::Float64,poly::Vector{Tuple{Float64,Float64}})
+function pointInsidePolygon{T<:AbstractFloat}(x::T,y::T,poly::Vector{Tuple{T,T}})
     n = length(poly)
     inside =false
 
@@ -61,7 +65,7 @@ end
 """
     projects latitude and longitude to ENU coordinate system
 """
-function toENU(lon::Float64, lat::Float64, center::Tuple{Float64,Float64})
+function toENU{T<:AbstractFloat}(lon::T, lat::T, center::Tuple{T,T})
     enu = Geodesy.ENU(Geodesy.LLA(lat,lon), Geodesy.LLA(center[2],center[1]))
     return enu.east, enu.north
 end
