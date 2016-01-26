@@ -38,12 +38,6 @@ function visualInit(v::ShowPath)
         line = v.roads[r.orig,r.dest]
         set_fillcolor(line,Color(255,0,0))
         set_thickness(line, get_thickness(line)*2)
-        #other direction too
-        if haskey(v.roads,(r.dest,r.orig))
-            line = v.roads[r.dest,r.orig]
-            set_fillcolor(line,Color(255,0,0))
-            set_thickness(line, get_thickness(line)*2)
-        end
     end
 end
 

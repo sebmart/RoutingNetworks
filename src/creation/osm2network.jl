@@ -54,7 +54,7 @@ Opens a OSM file,
 and returns a network object from the OSM data
 """
 function osm2network(filename::AbstractString)
-  @time osm = OSM.parseOSM(filename);
+  osm = OSM.parseOSM(filename);
 
 
   # fetch all nodes ids
@@ -68,7 +68,7 @@ function osm2network(filename::AbstractString)
   #construct the "Node" objects
   lonlat = Tuple{Float64,Float64}[c.lonlat for c in osm.nodes]
   bounds = boundingBox(lonlat)
-  center = ((bounds[2]-bounds[1])/2, (bounds[4]-bounds[3])/2)
+  center = ((bounds[2]+bounds[1])/2, (bounds[4]+bounds[3])/2)
   nodes = Array{Node}(length(lonlat))
   for (i,(lon,lat)) in enumerate(lonlat)
       x,y = toENU(lon,lat,center)

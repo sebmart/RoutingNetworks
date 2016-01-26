@@ -8,7 +8,7 @@ export Node, Road, Network
 
 #creation
 export osm2network, subsetNetwork, removeNodes, singleNodes, inPolygon, roadTypeSubset
-export stronglyConnected, intersections, queryOsmBox, queryOsmPolygon
+export stronglyConnected, intersections, queryOsmBox, queryOsmPolygon, updateProjection!
 export loadTemplate, saveTemplate, isTemplate
 export squareNetwork, urbanNetwork
 

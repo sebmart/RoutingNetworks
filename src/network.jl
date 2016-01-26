@@ -1,8 +1,8 @@
 immutable Node
   x::Float64
   y::Float64
-  lon::Float64
-  lat::Float64
+  lon::Float32
+  lat::Float32
 end
 Node(x::Float64,y::Float64) = Node(x,y,0.,0.)
 

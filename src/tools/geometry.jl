@@ -6,7 +6,7 @@
     Return bounding box of polygon/ list of points
 """
 function boundingBox{T<:AbstractFloat}(poly::Vector{Tuple{T,T}})
-    minX = Inf; maxX = -Inf; minY = Inf; maxY = -Inf
+    minX::T = Inf; maxX::T = -Inf; minY::T = Inf; maxY::T = -Inf
     for (x,y) in poly
         minX = min(minX,x)
         maxX = max(maxX,x)

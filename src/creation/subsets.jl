@@ -22,7 +22,8 @@ function subsetNetwork(n::Network, keepN::Vector{Int})
             roads[nodesIndices[s],nodesIndices[d]] = n.roads[s,d]
         end
     end
-    return Network(g,nodes,roads)
+
+    return updateProjection!(Network(g,nodes,roads))
 end
 
 
@@ -35,6 +36,7 @@ function removeNodes(n::Network, rem::Vector{Int})
         keep[i] = false
     end
     keepN = collect(1:length(n.nodes))[keep]
+    Tuple{Float64,Float64}[(n.x,n.y) for n in n.nodes]
     return subsetNetwork(n,keepN)
 end
 
@@ -66,7 +68,7 @@ end
 """
 Returns nodes that are inside a Polygon
 """
-function inPolygon(n::Network, poly::Vector{Tuple{Float64,Float64}})
+function inPolygon{T<:AbstractFloat}(n::Network, poly::Vector{Tuple{T,T}})
     inPoly = Int[]
     for i in vertices(n.graph)
         if pointInsidePolygon(n.nodes[i].lon, n.nodes[i].lat, poly)
@@ -147,4 +149,20 @@ function intersections(n::Network)
         end
     end
     return Network(g2,nodes,roads)
+end
+
+"""
+    `updateProjection`
+    updates the (x,y) projection of the nodes of the network given their latitude/longitude
+"""
+function updateProjection!(n::Network)
+    bounds = boundingBox([(n.lon,n.lat) for n in n.nodes])
+    center = ((bounds[2]+bounds[1])/2, (bounds[4]+bounds[3])/2)
+    nodes = Array{Node}(length(n.nodes))
+    for (i,no) in enumerate(n.nodes)
+        x,y = toENU(no.lon,no.lat,center)
+        nodes[i] = Node(x,y,no.lon,no.lat)
+    end
+    n.nodes = nodes
+    n
 end
