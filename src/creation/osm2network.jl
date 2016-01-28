@@ -2,8 +2,6 @@
 ## Contains osm2network, to transform an osm file into a network
 #######################################
 
-const OSM = OpenStreetMapParser
-
 const ROAD_CLASSES = Dict(
     "motorway" => 1,
     "trunk" => 2,
@@ -23,9 +21,9 @@ const ROAD_CLASSES = Dict(
     "road" => 6)
 
 #TOOLS from OpenStreetMapParser
-highway(w::OSM.Way) = haskey(w.tags, "highway")
-roadway(w::OSM.Way) = get(ROAD_CLASSES,w.tags["highway"],0.)
-function oneway(w::OSM.Way)
+highway(w::OSMWay) = haskey(w.tags, "highway")
+roadway(w::OSMWay) = get(ROAD_CLASSES,w.tags["highway"],0.)
+function oneway(w::OSMWay)
     v = get(w.tags,"oneway", "")
 
     if v == "false" || v == "no" || v == "0"
@@ -42,9 +40,9 @@ function oneway(w::OSM.Way)
             junction == "roundabout")
 end
 
-visible{T <: OSM.OSMElement}(obj::T) = (get(obj.tags, "visible", "") != "false")
-services(w::OSM.Way) = (get(w.tags,"highway", "") == "services")
-reverse(w::OSM.Way) = (get(w.tags,"oneway", "") == "-1")
+visible{T <: OSMElement}(obj::T) = (get(obj.tags, "visible", "") != "false")
+services(w::OSMWay) = (get(w.tags,"highway", "") == "services")
+reverse(w::OSMWay) = (get(w.tags,"oneway", "") == "-1")
 toradians(degree::AbstractFloat) = degree * π / 180.0
 
 
@@ -54,7 +52,7 @@ Opens a OSM file,
 and returns a network object from the OSM data
 """
 function osm2network(filename::AbstractString)
-  osm = OSM.parseOSM(filename);
+  osm = parseOSM(filename);
 
 
   # fetch all nodes ids

@@ -1,4 +1,5 @@
 ###################################################
+## geometry.jl
 ## Geometry tools
 ###################################################
 
@@ -66,6 +67,6 @@ end
     projects latitude and longitude to ENU coordinate system
 """
 function toENU{T<:AbstractFloat}(lon::T, lat::T, center::Tuple{T,T})
-    enu = Geodesy.ENU(Geodesy.LLA(lat,lon), Geodesy.LLA(center[2],center[1]))
+    enu = ENU(LLA(lat,lon), LLA(center[2],center[1]))
     return enu.east, enu.north
 end

@@ -1,7 +1,7 @@
 module RoutingNetworks
 
 using LightGraphs, SFML, NearestNeighbors
-import OpenStreetMapParser, Geodesy, JLD
+import JLD, LibExpat
 
 #main
 export Node, Road, Network
@@ -26,6 +26,10 @@ export boundingBox, distanceGeo, distanceCoord, pointInsidePolygon
 include("network.jl")
 
 
+include("tools/geometry.jl")
+include("tools/geodesy.jl")
+include("tools/osmparser.jl")
+
 include("creation/osm2network.jl")
 include("creation/query.jl")
 include("creation/subsets.jl")
@@ -41,5 +45,4 @@ include("visualization/visualize.jl")
 include("visualization/nodeinfo.jl")
 include("visualization/showpath.jl")
 
-include("tools/geometry.jl")
 end
