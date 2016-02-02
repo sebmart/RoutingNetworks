@@ -1,3 +1,5 @@
+__precompile__()
+
 module RoutingNetworks
 
 using LightGraphs, SFML, NearestNeighbors

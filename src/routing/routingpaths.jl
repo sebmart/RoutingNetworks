@@ -102,10 +102,11 @@ end
 """
     Returns the given path time (just sum the link times on path)
 """
-function pathTime(r::RoutingPaths, path::Vector{Int})
+function pathTime(times::AbstractArray{Float64,2}, path::Vector{Int})
     time = 0.
     for i in 1:length(path) - 1
-        time+=r.times[path[i],path[i+1]]
+        time+=times[path[i],path[i+1]]
     end
     return time
 end
+pathTime(r::RoutingPaths, path::Vector{Int}) = pathTime(r.times,path)
