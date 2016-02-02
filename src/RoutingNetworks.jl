@@ -15,7 +15,7 @@ export loadTemplate, saveTemplate, isTemplate
 export squareNetwork, urbanNetwork
 
 #routing
-export RoutingPaths, roadDistances, getPathTimes, getPath, shortestPaths!
+export RoutingPaths, roadDistances, getPathTimes, getPath, shortestPaths!, pathTime
 export parallelShortestPaths!, pathRoads
 
 #visualization
