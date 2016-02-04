@@ -66,25 +66,25 @@ function urbanNetwork(width::Int=8; distance::Float64=200.)
     end
 
     #Adding connecting roads
-    connections = [ #city1, a1, b1, city2, a2, b2, type
+    connections = [ #city1, i1, j1, city2, i2, j2, type
         #perimeter
-        (1, div(subwidth,2), subwidth       , 2, div(subwidth,2), 1              , 2),
-        (2, div(subwidth,2), subwidth       , 3, subwidth       , div(subwidth,2), 2),
-        (3, 1              , div(subwidth,2), 4, subwidth       , div(subwidth,2), 2),
-        (4, 1              , div(subwidth,2), 5, div(subwidth,2), subwidth       , 2),
-        (5, div(subwidth,2), 1              , 6, div(subwidth,2), subwidth       , 2),
-        (6, div(subwidth,2), 1              , 7, 1              , div(subwidth,2), 2),
-        (7, subwidth       , div(subwidth,2), 8, 1              , div(subwidth,2), 2),
-        (8, subwidth       , div(subwidth,2), 1, div(subwidth,2), 1              , 2),
+        (1, 1              , div(subwidth,2), 2, subwidth       , div(subwidth,2), 2),
+        (2, 1              , div(subwidth,2), 3, div(subwidth,2), subwidth       , 2),
+        (3, div(subwidth,2), 1              , 4, div(subwidth,2), subwidth       , 2),
+        (4, div(subwidth,2), 1              , 5, 1              , div(subwidth,2), 2),
+        (5, subwidth       , div(subwidth,2), 6, 1              , div(subwidth,2), 2),
+        (6, subwidth       , div(subwidth,2), 7, div(subwidth,2), 1              , 2),
+        (7, div(subwidth,2), subwidth       , 8, div(subwidth,2), 1              , 2),
+        (8, div(subwidth,2), subwidth       , 1, subwidth       , div(subwidth,2), 2),
         # link to city
-        (1, 1               , rand(1:subwidth), 0, width        , rand(1:width), 2),
-        (2, 1               , rand(1:subwidth), 0, width        , width        , 2),
-        (3, rand(1:subwidth), 1               , 0, rand(1:width), width        , 2),
-        (4, rand(1:subwidth), 1               , 0, 1            , width        , 2),
-        (5, subwidth        , rand(1:subwidth), 0, 1            , rand(1:width), 2),
-        (6, subwidth        , rand(1:subwidth), 0, 1            , 1            , 2),
-        (7, rand(1:subwidth), subwidth        , 0, rand(1:width), 1            , 2),
-        (8, rand(1:subwidth), subwidth        , 0, width        , 1            , 2)
+        (1, rand(1:subwidth), 1               , 0, rand(1:width), width        , 2),
+        (2, rand(1:subwidth), 1               , 0, 1            , width        , 2),
+        (3, subwidth        , rand(1:subwidth), 0, 1            , rand(1:width), 2),
+        (4, subwidth        , rand(1:subwidth), 0, 1            , 1            , 2),
+        (5, rand(1:subwidth), subwidth        , 0, rand(1:width), 1            , 2),
+        (6, rand(1:subwidth), subwidth        , 0, width        , 1            , 2),
+        (7, 1               , rand(1:subwidth), 0, width        , rand(1:width), 2),
+        (8, 1               , rand(1:subwidth), 0, width        , width        , 2)
     ]
     for (c1,a1,b1,c2,a2,b2,t) in connections
         # if rand() <= 0.7
