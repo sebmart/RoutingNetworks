@@ -23,7 +23,7 @@ export NetworkVisualizer, NodeInfo, ShowPath
 export visualize, visualInit, visualEvent, visualUpdate, copyVisualData
 
 #tools
-export boundingBox, distanceGeo, distanceCoord, pointInsidePolygon
+export boundingBox, distanceGeo, distanceCoord, pointInsidePolygon, nRoads, nNodes
 
 include("network.jl")
 

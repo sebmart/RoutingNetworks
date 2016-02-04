@@ -29,5 +29,5 @@ function Network(nodes::Vector{Node}, roads::Dict{Tuple{Int,Int},Road})
 end
 
 function Base.show(io::IO, n::Network)
-    println("Network with $(nv(n.graph)) nodes and $(ne(n.graph)) edges")
+    println("Network with $(nNodes(n)) nodes and $(nRoads(n)) edges")
 end
