@@ -28,7 +28,7 @@ function urbanNetwork(width::Int=8; distance::Float64=200.)
 
     #square cities:
     urban = squareNetwork(width, distance=distance)
-    suburbs = Network[squareNetwork(subwidth) for i in 1:8]
+    suburbs = Network[squareNetwork(subwidth, distance=distance) for i in 1:8]
     resize!(urban.nodes, width^2 + 8*subwidth^2)
 
     # 4  3  2

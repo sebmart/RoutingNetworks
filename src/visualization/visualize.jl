@@ -11,11 +11,13 @@
     - attribute `window::RenderWindow`
     - attribute `nodes::Vector{CircleShape}`
     - attribute `roads::Dict{Tuple{Int,Int},Line}`
+    - attribute `nodeRadius::Float64` (to scale things)
 
     can implement
     - method `visualInit` => initialize things
     - method `visualEvent`  => receive one event (may be 0 or several per frame)
     - method `visualUpdate` => called each frame, to update and draw objects
+    - method `visualScale` => called when change in nodeRadius
 """
 abstract NetworkVisualizer
 
@@ -38,6 +40,12 @@ function visualUpdate(v::NetworkVisualizer,frameTime::Float64)
 end
 
 """
+    `visualScale` => called when change in nodeRadius
+"""
+function visualScale(v::NetworkVisualizer)
+end
+
+"""
     `copyVisualData` : copy `ref` visual data into `v`
 """
 function copyVisualData(ref::NetworkVisualizer,v::NetworkVisualizer)
@@ -52,7 +60,7 @@ end
     - if given network, calls `NodeInfo` visualizer is chosen
 """
 function visualize(v::NetworkVisualizer)
-    nodeRadius = 10.
+    v.nodeRadius = 10.
 
     #create nodes
     v.nodes = CircleShape[CircleShape() for i in 1:length(v.network.nodes)]
@@ -71,7 +79,7 @@ function visualize(v::NetworkVisualizer)
     end
 
     # set geometry
-    setSizesAndPositions!(v, nodeRadius)
+    setSizesAndPositions!(v)
 
     # Defines the window, an event listener, and view
     window_w, window_h = 1200,1200
@@ -113,11 +121,13 @@ function visualize(v::NetworkVisualizer)
                 if k == KeyCode.ESCAPE || k == KeyCode.Q
                     close(v.window)
                 elseif k == KeyCode.A
-                    nodeRadius = nodeRadius * 1.3
-                    setSizesAndPositions!(v, nodeRadius)
+                    v.nodeRadius *= 1.3
+                    setSizesAndPositions!(v)
+                    visualScale(v)
                 elseif k == KeyCode.S
-                    nodeRadius = nodeRadius / 1.3
-                    setSizesAndPositions!(v, nodeRadius)
+                    v.nodeRadius /= 1.3
+                    setSizesAndPositions!(v)
+                    visualScale(v)
                 elseif k == KeyCode.D
                     hideNodes = !hideNodes
                 end
@@ -167,7 +177,7 @@ end
 """
     `setSizesAndPosition!` is a helper function that updates all the coordinates
 """
-function setSizesAndPositions!(v::NetworkVisualizer, nodeRadius::Float64)
+function setSizesAndPositions!(v::NetworkVisualizer)
     n = v.network
     # create position vectors (inverse y axe for plotting)
     positions = Vector2f[Vector2f(node.x,-node.y) for node in n.nodes]
@@ -177,8 +187,8 @@ function setSizesAndPositions!(v::NetworkVisualizer, nodeRadius::Float64)
 
     #positions nodes
     for (i, no) in enumerate(v.nodes)
-        set_radius(no, nodeRadius)
-        set_position(no, positions[i] - Vector2f(nodeRadius,nodeRadius))
+        set_radius(no, v.nodeRadius)
+        set_position(no, positions[i] - Vector2f(v.nodeRadius,v.nodeRadius))
     end
 
     #positions roads
@@ -188,8 +198,8 @@ function setSizesAndPositions!(v::NetworkVisualizer, nodeRadius::Float64)
         x = positions[o].y - positions[d].y
         y = positions[d].x - positions[o].x
         l = sqrt(x^2+y^2); x = x/l; y = y/l
-        offset = Vector2f(x*nodeRadius*3./5.,y*nodeRadius*3./5.)
-        road = Line(positions[o]+offset,positions[d]+offset, 4*nodeRadius/5.)
+        offset = Vector2f(x*v.nodeRadius*3./5.,y*v.nodeRadius*3./5.)
+        road = Line(positions[o]+offset,positions[d]+offset, 4*v.nodeRadius/5.)
         set_fillcolor(road,get_fillcolor(v.roads[o,d]))
         roads[o,d] = road
     end

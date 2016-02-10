@@ -13,6 +13,7 @@ type ShowPath <: NetworkVisualizer
     window::RenderWindow
     nodes::Vector{CircleShape}
     roads::Dict{Tuple{Int,Int},Line}
+    nodeRadius::Float64
 
 
     "path to show"

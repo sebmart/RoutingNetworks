@@ -1,3 +1,12 @@
+###################################################
+## network.jl
+## the network basics
+###################################################
+
+"""
+  `Node`, represents one network node. `x` and `y` are projections of `lon` and `lat`
+  - `lon` and `lat` do not have to be defined
+"""
 immutable Node
   x::Float64
   y::Float64
@@ -6,6 +15,9 @@ immutable Node
 end
 Node(x::Float64,y::Float64) = Node(x,y,0.,0.)
 
+"""
+  `Road`, represents a road in the network. roadType from 1 to 8
+"""
 immutable Road
   orig::Int
   dest::Int
@@ -31,3 +43,12 @@ end
 function Base.show(io::IO, n::Network)
     println("Network with $(nNodes(n)) nodes and $(nRoads(n)) edges")
 end
+
+"""
+    `nRoads`: returns number of roads in network (in both directions)
+"""
+nRoads(n::Network) = ne(n.graph)
+"""
+    `nNodes`: returns number of nodes in network
+"""
+nNodes(n::Network) = nv(n.graph)

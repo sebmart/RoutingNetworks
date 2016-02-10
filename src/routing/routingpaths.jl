@@ -87,9 +87,17 @@ end
 
 
 """
-    Returns path between origin and destination (list of node ids)
+    `traveltime(r,i,j,k)` : travel time from i to j coming from node k
+    if k == i: start in i
 """
-function getPath(r::RoutingPaths, orig::Int, dest::Int)
+traveltime(r::RoutingPaths, i::Int, j::Int, k::Int = i) = r.pathTimes[i,j]
+
+"""
+    `getPath(RoutinPaths, orig, dest, prev)`
+    Returns path between origin and destination (list of node ids) coming from prev
+    if prev = orig then shortest origin
+"""
+function getPath(r::RoutingPaths, orig::Int, dest::Int, prev::Int = orig)
     path = Int[dest]
     lastNode = dest
     while lastNode != orig
@@ -97,6 +105,30 @@ function getPath(r::RoutingPaths, orig::Int, dest::Int)
         push!(path, lastNode)
     end
     return path[end:-1:1]
+end
+
+"""
+    `getPathWithTime(RoutinPaths, orig, dest, prev)`
+    Returns path and times between origin and destination (list of node ids) coming from prev
+    if prev = orig then shortest origin
+"""
+function getPathWithTimes(r::RoutingPaths, orig::Int, dest::Int, prev::Int = orig; startTime::Float64=0.)
+    path = Int[dest]
+    lastNode = dest
+    while lastNode != orig
+        lastNode = r.pathPrevious[orig,lastNode]
+        push!(path, lastNode)
+    end
+    path = path[end:-1:1]
+
+    times = Array(Tuple{Float64,Float64},length(path)-1)
+    t = startTime
+    for i in 1:length(path) - 1
+        rdTime = r.times[path[i],path[i+1]]
+        times[i] = (t, t+rdTime)
+        t += rdTime
+    end
+    return path, times
 end
 
 """
@@ -110,3 +142,8 @@ function pathTime(times::AbstractArray{Float64,2}, path::Vector{Int})
     return time
 end
 pathTime(r::RoutingPaths, path::Vector{Int}) = pathTime(r.times,path)
+
+"""
+    `longestPathTime`, longuest path time in network
+"""
+longestPathTime(r::RoutingPaths) = maximum(r.pathTimes)

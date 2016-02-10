@@ -15,12 +15,13 @@ export loadTemplate, saveTemplate, isTemplate
 export rectNetwork, squareNetwork, urbanNetwork
 
 #routing
-export RoutingPaths, roadDistances, getPathTimes, getPath, shortestPaths!, pathTime
-export parallelShortestPaths!, pathRoads
+export RoutingPaths, roadDistances, getPathTimes, getPath, shortestPaths!
+export pathTime, getPathWithTimes, longestPathTime
+export parallelShortestPaths!, traveltime, pathRoads
 
 #visualization
 export NetworkVisualizer, NodeInfo, ShowPath
-export visualize, visualInit, visualEvent, visualUpdate, copyVisualData
+export visualize, visualInit, visualEvent, visualUpdate, visualScale, copyVisualData
 
 #tools
 export boundingBox, distanceGeo, distanceCoord, pointInsidePolygon, nRoads, nNodes
