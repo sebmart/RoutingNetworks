@@ -42,6 +42,7 @@ type Network
     function Network(graph::DiGraph, nodes::Vector{Node}, roads::Dict{Tuple{Int,Int},Road})
         n = new()
         n.graph = graph; n.nodes = nodes; n.roads = roads;
+        return n
     end
 end
 
