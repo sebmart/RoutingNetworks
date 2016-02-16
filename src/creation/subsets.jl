@@ -157,7 +157,7 @@ end
 """
 function updateProjection!(n::Network)
     bounds = boundingBox([(n.lon,n.lat) for n in n.nodes])
-    center = ((bounds[2]+bounds[1])/2, (bounds[4]+bounds[3])/2)
+    n.projcenter = ((bounds[2]+bounds[1])/2, (bounds[4]+bounds[3])/2)
     nodes = Array{Node}(length(n.nodes))
     for (i,no) in enumerate(n.nodes)
         x,y = toENU(no.lon,no.lat,center)

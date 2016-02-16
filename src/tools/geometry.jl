@@ -64,9 +64,27 @@ function pointInsidePolygon{T<:AbstractFloat}(x::T,y::T,poly::Vector{Tuple{T,T}}
 end
 
 """
-    projects latitude and longitude to ENU coordinate system
+    `toENU`, projects latitude and longitude to ENU coordinate system
 """
 function toENU{T<:AbstractFloat}(lon::T, lat::T, center::Tuple{T,T})
     enu = ENU(LLA(lat,lon), LLA(center[2],center[1]))
     return enu.east, enu.north
+end
+toENU(lon::Float32, lat::Float32, n::Network) = toENU(lon, lat, n.projcenter)
+toENU(lon::Float64, lat::Float64, n::Network) = toENU(convert(Float32,lon), convert(Float32,lat), n.projcenter)
+
+"""
+    `updateProjection`
+    updates the (x,y) projection of the nodes of the network given their latitude/longitude
+"""
+function updateProjection!(n::Network)
+    bounds = boundingBox([(n.lon,n.lat) for n in n.nodes])
+    n.projcenter = ((bounds[2]+bounds[1])/2, (bounds[4]+bounds[3])/2)
+    nodes = Array{Node}(length(n.nodes))
+    for (i,no) in enumerate(n.nodes)
+        x,y = toENU(no.lon,no.lat,center)
+        nodes[i] = Node(x,y,no.lon,no.lat)
+    end
+    n.nodes = nodes
+    n
 end
