@@ -99,5 +99,7 @@ function osm2network(filename::AbstractString)
       end
     end
   end
-  return Network(g, nodes, roads)
+  n = Network(g, nodes, roads)
+  n.projcenter = center
+  return n
 end
