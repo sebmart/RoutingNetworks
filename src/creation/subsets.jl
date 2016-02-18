@@ -92,7 +92,9 @@ function roadTypeSubset(n::Network, roadTypes::AbstractArray{Int})
             add_edge!(g,o,d)
         end
     end
-    return Network(g,deepcopy(n.nodes), roads)
+    n2 = Network(g,deepcopy(n.nodes), roads)
+    n2.projcenter = n.projcenter
+    return n2
 end
 
 """
@@ -148,5 +150,7 @@ function intersections(n::Network)
 
         end
     end
-    return Network(g2,nodes,roads)
+    n2 = Network(g2,nodes,roads)
+    updateProjection!(n2)
+    return n2
 end
