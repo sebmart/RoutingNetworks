@@ -34,9 +34,17 @@ function visualEvent(v::NetworkVisualizer, event::Event)
 end
 
 """
-    `updateVisual` => called each frame, to update and draw objects, is given frame-time
+    `visualStartUpdate` => called each frame, to update and draw objects, is given frame-time
+    (before other objects drawn)
 """
-function visualUpdate(v::NetworkVisualizer,frameTime::Float64)
+function visualStartUpdate(v::NetworkVisualizer,frameTime::Float64)
+end
+
+"""
+    `visualEndUpdate` => called each frame, to update and draw objects, is given frame-time
+     (after other objects drawn)
+"""
+function visualEndUpdate(v::NetworkVisualizer,frameTime::Float64)
 end
 
 """
@@ -157,6 +165,8 @@ function visualize(v::NetworkVisualizer)
 		end
         set_view(v.window,view)
         clear(v.window, SFML.white)
+        # additional updates
+        visualStartUpdate(v, frameTime)
         for road in values(v.roads)
             draw(v.window,road)
         end
@@ -167,7 +177,7 @@ function visualize(v::NetworkVisualizer)
         end
 
         # additional updates
-        visualUpdate(v, frameTime)
+        visualEndUpdate(v, frameTime)
 
         display(v.window)
     end
