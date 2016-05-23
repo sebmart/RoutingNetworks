@@ -93,7 +93,7 @@ end
 traveltime(r::RoutingPaths, i::Int, j::Int, k::Int = i) = r.pathTimes[i,j]
 
 """
-    `getPath(RoutinPaths, orig, dest, prev)`
+    `getPath(RoutingPaths, orig, dest, prev)`
     Returns path between origin and destination (list of node ids) coming from prev
     if prev = orig then shortest origin
 """
@@ -108,7 +108,28 @@ function getPath(r::RoutingPaths, orig::Int, dest::Int, prev::Int = orig)
 end
 
 """
-    `getPathWithTime(RoutinPaths, orig, dest, prev)`
+    `getPathEdges(RoutingPaths, orig, dest)`
+    Returns path between origin and destination as a list of edge IDs (i,j)
+"""
+function getPathEdges(r::RoutingPaths, orig::Int, dest::Int)
+    # empty path case
+    if orig == dest
+        return Edge[]
+    end
+    edgeEnd = dest
+    edgeStart = r.pathPrevious[orig, edgeEnd]
+    path = [Edge(edgeStart, edgeEnd)]
+    while edgeStart != orig
+        edgeEnd = edgeStart
+        edgeStart = r.pathPrevious[orig, edgeEnd]
+        push!(path, Edge(edgeStart, edgeEnd))
+    end
+    # don't forget to reverse path
+    return path[end:-1:1]
+end
+
+"""
+    `getPathWithTime(RoutingPaths, orig, dest, prev)`
     Returns path and times between origin and destination (list of node ids) coming from prev
     if prev = orig then shortest origin
 """
