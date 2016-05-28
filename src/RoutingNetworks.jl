@@ -16,7 +16,7 @@ export rectNetwork, squareNetwork, urbanNetwork
 
 #routing
 export RoutingPaths, roadDistances, getPathTimes, getPath, getPathEdges, shortestPaths!
-export pathTime, getPathWithTimes, longestPathTime
+export pathTime, pathEdgesTime, getPathWithTimes, longestPathTime
 export parallelShortestPaths!, traveltime, pathRoads
 
 #visualization
