@@ -165,6 +165,18 @@ end
 pathTime(r::RoutingPaths, path::Vector{Int}) = pathTime(r.times,path)
 
 """
+    Returns the given path time from path edge list (just sum the link times on path)
+"""
+function pathEdgesTime(times::AbstractArray{Float64,2}, pathEdges::Vector{Edge})
+    time = 0.
+    for edge in pathEdges
+        time += times[src(edge),dst(edge)]
+    end
+    return time
+end
+pathEdgesTime(r::RoutingPaths, pathEdges::Vector{Edge}) = pathEdgesTime(r.times,pathEdges)
+
+"""
     `longestPathTime`, longuest path time in network
 """
 longestPathTime(r::RoutingPaths) = maximum(r.pathTimes)
