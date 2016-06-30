@@ -14,6 +14,7 @@ type ShowPath <: NetworkVisualizer
     nodes::Vector{CircleShape}
     roads::Dict{Tuple{Int,Int},Line}
     nodeRadius::Float64
+    nodesToView::Vector{Node}
 
 
     "path to show"
@@ -27,6 +28,7 @@ type ShowPath <: NetworkVisualizer
         obj.network  = n
         obj.path     = path
         obj.nodeinfo = NodeInfo(n)
+        obj.nodesToView = n.nodes[path]
         return obj
     end
 end
@@ -39,6 +41,24 @@ function visualInit(v::ShowPath)
         line = v.roads[r.orig,r.dest]
         set_fillcolor(line,Color(255,0,0))
         set_thickness(line, get_thickness(line)*2)
+    end
+end
+
+function visualScale(v::ShowPath)
+    # BEGIN NOTE
+    # should visuals be given to nodeinfo again ? I'm not sure what copyVisualData does but it doesn't look like it should be called again
+    # END NOTE
+    # change the path
+    for r in pathRoads(v.network, v.path)
+        line = v.roads[r.orig, r.dest]
+        set_thickness(line, get_thickness(line)*2)
+    end
+end
+
+function visualEndUpdate(v::ShowPath, frameTime::Float64)
+    for road in pathRoads(v.network, v.path)
+        line = v.roads[road.orig, road.dest]
+        draw(v.window,line)
     end
 end
 
