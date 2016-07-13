@@ -45,9 +45,6 @@ function visualInit(v::ShowPath)
 end
 
 function visualScale(v::ShowPath)
-    # BEGIN NOTE
-    # should visuals be given to nodeinfo again ? I'm not sure what copyVisualData does but it doesn't look like it should be called again
-    # END NOTE
     # change the path
     for r in pathRoads(v.network, v.path)
         line = v.roads[r.orig, r.dest]
