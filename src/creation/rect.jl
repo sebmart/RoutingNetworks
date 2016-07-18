@@ -32,7 +32,7 @@ function rectNetwork(width::Int = 5, height::Int = 10; distX::Float64=200., dist
             n1 = coordToLoc(i,j); n2 = coordToLoc(i+1,j)
             dist = distanceCoord(nodes[n1],nodes[n2])
             roads[(n1,n2)] = Road(n1,n2,dist, 5)
-            roads[(n2,n1)] = Road(n1,n2,dist, 5)
+            roads[(n2,n1)] = Road(n2,n1,dist, 5)
         end
 
         #Horizontal roads
@@ -40,7 +40,7 @@ function rectNetwork(width::Int = 5, height::Int = 10; distX::Float64=200., dist
             n1 = coordToLoc(i,j); n2 = coordToLoc(i,j+1)
             dist = distanceCoord(nodes[n1],nodes[n2])
             roads[(n1,n2)] = Road(n1,n2,dist, 5)
-            roads[(n2,n1)] = Road(n1,n2,dist, 5)
+            roads[(n2,n1)] = Road(n2,n1,dist, 5)
         end
         return Network(nodes, roads)
 end

@@ -12,6 +12,7 @@
     - attribute `nodes::Vector{CircleShape}`
     - attribute `roads::Dict{Tuple{Int,Int},Line}`
     - attribute `nodeRadius::Float64` (to scale things)
+    - attribute `nodesToView::Vector{Node}` nodes that will be in initial view
 
     can implement
     - method `visualInit` => initialize things
@@ -96,7 +97,7 @@ function visualize(v::NetworkVisualizer)
     event = Event()
 
     # Set up the initial view
-    minX, maxX, minY, maxY = boundingBox(Tuple{Float64,Float64}[(n.x,n.y) for n in v.network.nodes])
+    minX, maxX, minY, maxY = boundingBox(Tuple{Float64,Float64}[(n.x,n.y) for n in v.nodesToView])
     # Do the Y-axis transformation
     minY, maxY = -maxY, -minY
     networkLength = max(maxX-minX, maxY-minY)
