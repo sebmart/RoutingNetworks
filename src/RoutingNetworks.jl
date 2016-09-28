@@ -18,6 +18,7 @@ export rectNetwork, squareNetwork, urbanNetwork
 export RoutingPaths, roadDistances, getPathTimes, getPath, getPathEdges, shortestPaths!
 export pathTime, pathEdgesTime, getPathWithTimes, longestPathTime
 export parallelShortestPaths!, traveltime, pathRoads
+export roadTypeRouting, randomTimeRouting, maxSpeedTimes, uniformTimes, randomTimes
 
 #visualization
 export NetworkVisualizer, NodeInfo, ShowPath
@@ -43,6 +44,7 @@ include("creation/urban.jl")
 include("routing/routingpaths.jl")
 include("routing/shortestpaths.jl")
 include("routing/tools.jl")
+include("routing/virtualtimes.jl")
 
 include("visualization/visualize.jl")
 include("visualization/nodeinfo.jl")
