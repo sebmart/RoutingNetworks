@@ -8,7 +8,7 @@ abstract OSMElement
 # +-----+-------------------+---------------+
 # | id  | lonlat            | tags...       |
 # +-----+-------------------+---------------+
-# | Int | (Float64,Float64) | UTF8String... |
+# | Int | (Float64,Float64) | String... |
 # | .   | .                 | .             |
 # | .   | .                 | .             |
 # | .   | .                 | .             |
@@ -17,23 +17,23 @@ abstract OSMElement
 type OSMNode <: OSMElement
     id::Int
     lonlat::Tuple{Float64,Float64}
-    tags::Dict{UTF8String,UTF8String}
+    tags::Dict{String,String}
     OSMNode(id::Int, lonlat::Tuple{Float64,Float64}) = new(id, lonlat)
 end
 
 function tags(n::OSMNode) # lazily create tags
-    isdefined(n, :tags) || (n.tags = Dict{UTF8String,UTF8String}())
+    isdefined(n, :tags) || (n.tags = Dict{String,String}())
     n.tags
 end
 
 # OSMNode(id::Int, lonlat::Tuple{Float64,Float64}) =
-#     OSMNode(id, lonlat, Dict{UTF8String,UTF8String}())
+#     OSMNode(id, lonlat, Dict{String,String}())
 
 # OSMWays
 # +-----+-------------------+---------------+
 # | id  | nodes (osm id)    | tags...       |
 # +-----+-------------------+---------------+
-# | Int | Vector{Int}       | UTF8String... |
+# | Int | Vector{Int}       | String... |
 # | .   | .                 | .             |
 # | .   | .                 | .             |
 # | .   | .                 | .             |
@@ -42,18 +42,18 @@ end
 type OSMWay <: OSMElement
     id::Int
     nodes::Vector{Int}
-    tags::Dict{UTF8String,UTF8String}
-    OSMWay(id::Int) = new(id, Vector{Int}(), Dict{UTF8String,UTF8String}())
+    tags::Dict{String,String}
+    OSMWay(id::Int) = new(id, Vector{Int}(), Dict{String,String}())
 end
 tags(w::OSMWay) = w.tags
 
-# OSMWay(id::Int) = OSMWay(id, Vector{Int}(), Dict{UTF8String,UTF8String}())
+# OSMWay(id::Int) = OSMWay(id, Vector{Int}(), Dict{String,String}())
 
 # Relations
 # +-----+-----------------------+---------------+
 # | id  | members               | tags...       |
 # +-----+-----------------------+---------------+
-# | Int | Vector{Dict{Str,Str}} | UTF8String... |
+# | Int | Vector{Dict{Str,Str}} | String... |
 # | .   | .                     | .             |
 # | .   | .                     | .             |
 # | .   | .                     | .             |
@@ -61,26 +61,26 @@ tags(w::OSMWay) = w.tags
 
 type Relation <: OSMElement
     id::Int
-    members::Vector{Dict{UTF8String,UTF8String}}
-    tags::Dict{UTF8String,UTF8String}
-    Relation(id::Int) = new(id, Vector{Dict{UTF8String,UTF8String}}(),
-                            Dict{UTF8String,UTF8String}())
+    members::Vector{Dict{String,String}}
+    tags::Dict{String,String}
+    Relation(id::Int) = new(id, Vector{Dict{String,String}}(),
+                            Dict{String,String}())
 end
 tags(r::Relation) = r.tags
 
-# Relation(id::Int) = Relation(id, Vector{Dict{UTF8String,UTF8String}}(),
-#                              Dict{UTF8String,UTF8String}())
+# Relation(id::Int) = Relation(id, Vector{Dict{String,String}}(),
+#                              Dict{String,String}())
 
 type OSMData
     nodes::Vector{OSMNode}
     ways::Vector{OSMWay}
     relations::Vector{Relation}
-    node_tags::Set{UTF8String}
-    way_tags::Set{UTF8String}
-    relation_tags::Set{UTF8String}
+    node_tags::Set{String}
+    way_tags::Set{String}
+    relation_tags::Set{String}
 end
 OSMData() = OSMData(Vector{OSMNode}(), Vector{OSMWay}(), Vector{Relation}(),
-                    Set{UTF8String}(), Set{UTF8String}(), Set{UTF8String}())
+                    Set{String}(), Set{String}(), Set{String}())
 
 type DataHandle
     element::Symbol
@@ -156,7 +156,7 @@ function parseOSMNode(handler::LibExpat.XPStreamHandler,
         data.element = :OSMNode
         data.curr = OSMNode(parse(Int, attr["id"]),
                          (float(attr["lon"]), float(attr["lat"])),
-                         Dict{UTF8String,UTF8String}())
+                         Dict{String,String}())
     elseif name == "tag" && data.element == :OSMNode
         data.curr.tags[attr["k"]] = attr["v"]
     end
@@ -206,7 +206,7 @@ function parseOSMWay(handler::LibExpat.XPStreamHandler,
         handler.data.element = :OSMWay
         handler.data.curr = OSMWay(parse(Int, attr["id"]),
                                 Vector{Int}(),
-                                Dict{UTF8String,UTF8String}())
+                                Dict{String,String}())
     elseif handler.data.element == :OSMWay
         if name == "tag"
             handler.data.curr.tags[attr["k"]] = attr["v"]
@@ -255,8 +255,8 @@ function parseRelation(handler::LibExpat.XPStreamHandler,
     if name == "relation"
         handler.data.element = :Relation
         handler.data.curr = Relation(parse(Int, attr["id"]),
-                                     Vector{Dict{UTF8String,UTF8String}}(),
-                                     Dict{UTF8String,UTF8String}())
+                                     Vector{Dict{String,String}}(),
+                                     Dict{String,String}())
     elseif handler.data.element == :Relation
         if name == "tag"
             handler.data.curr.tags[attr["k"]] = attr["v"]
