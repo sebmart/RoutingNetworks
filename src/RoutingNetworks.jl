@@ -2,7 +2,7 @@ __precompile__(false)
 
 module RoutingNetworks
 
-using LightGraphs, SFML, NearestNeighbors
+using LightGraphs, SFML, NearestNeighbors, Colors
 import JLD, LibExpat
 
 #main
@@ -23,6 +23,7 @@ export roadTypeRouting, randomTimeRouting, maxSpeedTimes, uniformTimes, randomTi
 #visualization
 export NetworkVisualizer, NodeInfo, ShowPath
 export visualize, visualInit, visualEvent, visualUpdate, visualScale, copyVisualData
+export VizColors, RoadTypeColors, SpeedColors
 
 #tools
 export boundingBox, distanceGeo, distanceCoord, pointInsidePolygon, toENU, nRoads, nNodes
@@ -46,6 +47,7 @@ include("routing/shortestpaths.jl")
 include("routing/tools.jl")
 include("routing/virtualtimes.jl")
 
+include("visualization/vizcolors.jl")
 include("visualization/visualize.jl")
 include("visualization/nodeinfo.jl")
 include("visualization/showpath.jl")

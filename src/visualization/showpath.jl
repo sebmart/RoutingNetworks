@@ -14,6 +14,7 @@ type ShowPath <: NetworkVisualizer
     nodes::Vector{CircleShape}
     roads::Dict{Tuple{Int,Int},Line}
     nodeRadius::Float64
+    colors::VizColors
     nodesToView::Vector{Node}
 
 

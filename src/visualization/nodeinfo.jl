@@ -13,6 +13,7 @@ type NodeInfo <: NetworkVisualizer
     nodes::Vector{CircleShape}
     roads::Dict{Tuple{Int,Int},Line}
     nodeRadius::Float64
+    colors::VizColors
     nodesToView::Vector{Node}
 
     "node positions KD-tree"
@@ -33,6 +34,7 @@ type NodeInfo <: NetworkVisualizer
         obj.network = n
         obj.tree = KDTree(dataPos)
         obj.selectedNode = 1
+        obj.colors = RoadTypeColors()
         obj.nodesToView = n.nodes
         return obj
     end
@@ -44,7 +46,7 @@ function visualEvent(v::NodeInfo, event::Event)
         coord = pixel2coords(v.window,Vector2i(x,y))
 
         id = knn(v.tree,[Float64(coord.x),-Float64(coord.y)],1)[1][1]
-        set_fillcolor(v.nodes[v.selectedNode], SFML.Color(0,0,0,150))
+        set_fillcolor(v.nodes[v.selectedNode], nodeColor(v.colors, v.network.nodes[v.selectedNode]))
         set_fillcolor(v.nodes[id], SFML.red)
         v.selectedNode = id
         set_title(v.window, "Node : $id in: $(in_neighbors(v.network.graph,id)) out: $(out_neighbors(v.network.graph,id))")

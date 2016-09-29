@@ -55,6 +55,11 @@ end
 function visualScale(v::NetworkVisualizer)
 end
 
+function Base.show(io::IO, viz::NetworkVisualizer)
+    typeName = split(string(typeof(viz)),".")[end]
+    println(io,"Network Visualizer: $(typeName)")
+end
+
 """
     `copyVisualData` : copy `ref` visual data into `v`
 """
