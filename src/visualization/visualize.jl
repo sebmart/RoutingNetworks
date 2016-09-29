@@ -12,6 +12,7 @@
     - attribute `nodes::Vector{CircleShape}`
     - attribute `roads::Dict{Tuple{Int,Int},Line}`
     - attribute `nodeRadius::Float64` (to scale things)
+    - attribute `colors::VizColors` to get all the colors of the visualization
     - attribute `nodesToView::Vector{Node}` nodes that will be in initial view
 
     can implement
@@ -73,17 +74,15 @@ function visualize(v::NetworkVisualizer)
 
     #create nodes
     v.nodes = CircleShape[CircleShape() for i in 1:length(v.network.nodes)]
-    for n in v.nodes
-        set_fillcolor(n, SFML.Color(0,0,0))
+    for (i,n) in enumerate(v.nodes)
+        set_fillcolor(n, nodeColor(v.colors, v.network.nodes[i]))
     end
 
     #create roads
     v.roads = Dict{Tuple{Int,Int},Line}()
-    typecolors= [Color(0,255,0), Color(55,200,0), Color(105,150,0), Color(150,105,0),
-             Color(0,0,125), Color(0,0,125), Color(0,0,125), Color(0,0,125)]
     for ((o,d),r) in v.network.roads
         road = Line(Vector2f(0.,0.),Vector2f(1000.,0.))
-        set_fillcolor(road,typecolors[r.roadType])
+        set_fillcolor(road,roadColor(v.colors, r))
         v.roads[o,d] = road
     end
 
