@@ -1,12 +1,12 @@
 ###################################################
-## nodeinfo.jl
+## networkviz.jl
 ## add point&click node information to visual (default visualizer)
 ###################################################
 
 """
-    `NodeInfo`: NetworkVisualizer that shows node information in title bar after click
+    `NetworkViz`: Basic NetworkVisualizer. Shows node information in title bar after click
 """
-type NodeInfo <: NetworkVisualizer
+type NetworkViz <: NetworkVisualizer
     # Mandatory attributes
     network::Network
     window::RenderWindow
@@ -22,7 +22,7 @@ type NodeInfo <: NetworkVisualizer
     selectedNode::Int
 
     "contructor: initialize kd-tree"
-    function NodeInfo(n::Network)
+    function NetworkViz(n::Network)
         obj = new()
         # KD-tree with positions
         dataPos = Array{Float64,2}(2,length(n.nodes))
@@ -40,7 +40,7 @@ type NodeInfo <: NetworkVisualizer
     end
 end
 
-function visualEvent(v::NodeInfo, event::Event)
+function visualEvent(v::NetworkViz, event::Event)
     if get_type(event) == EventType.MOUSE_BUTTON_PRESSED && get_mousebutton(event).button == MouseButton.LEFT
         x,y = get_mousebutton(event).x, get_mousebutton(event).y
         coord = pixel2coords(v.window,Vector2i(x,y))

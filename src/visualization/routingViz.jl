@@ -1,13 +1,13 @@
 ###################################################
-## showpath.jl
+## routingviz.jl
 ## network visualizer - show a given path
 ## also add nodeInfo
 ###################################################
 
 """
-    `ShowPath`: Network visualizer that shows a given path. Also adds NodeInfo
+    `RoutingViz`: Network visualizer that shows a given path. Also adds NodeInfo
 """
-type ShowPath <: NetworkVisualizer
+type RoutingViz <: NetworkVisualizer
     # Mandatory attributes
     network::Network
     window::RenderWindow
@@ -20,11 +20,11 @@ type ShowPath <: NetworkVisualizer
 
     "path to show"
     path::Vector{Int}
-    "node information"
-    nodeinfo::NodeInfo
+    "basic visualizer"
+    nodeinfo::NetworkViz
 
     "contructor"
-    function ShowPath(n::Network, path::Vector{Int})
+    function RoutingViz(n::Network, path::Vector{Int})
         obj = new()
         obj.network  = n
         obj.path     = path
@@ -34,7 +34,7 @@ type ShowPath <: NetworkVisualizer
     end
 end
 
-function visualInit(v::ShowPath)
+function visualInit(v::RoutingViz)
     #give visuals to nodeinfo
     copyVisualData(v,v.nodeinfo)
     #Change the path
@@ -45,7 +45,7 @@ function visualInit(v::ShowPath)
     end
 end
 
-function visualScale(v::ShowPath)
+function visualScale(v::RoutingViz)
     # change the path
     for r in pathRoads(v.network, v.path)
         line = v.roads[r.orig, r.dest]
@@ -53,11 +53,11 @@ function visualScale(v::ShowPath)
     end
 end
 
-function visualEndUpdate(v::ShowPath, frameTime::Float64)
+function visualEndUpdate(v::RoutingViz, frameTime::Float64)
     for road in pathRoads(v.network, v.path)
         line = v.roads[road.orig, road.dest]
         draw(v.window,line)
     end
 end
 
-visualEvent(v::ShowPath, event::Event) = visualEvent(v.nodeinfo,event)
+visualEvent(v::RoutingViz, event::Event) = visualEvent(v.nodeinfo,event)

@@ -21,7 +21,7 @@ export parallelShortestPaths!, traveltime, pathRoads
 export roadTypeRouting, randomTimeRouting, maxSpeedTimes, uniformTimes, randomTimes
 
 #visualization
-export NetworkVisualizer, NodeInfo, ShowPath
+export NetworkVisualizer, NetworkViz, RoutingViz
 export visualize, visualInit, visualEvent, visualUpdate, visualScale, copyVisualData
 export VizColors, RoadTypeColors, SpeedColors
 
@@ -49,7 +49,7 @@ include("routing/virtualtimes.jl")
 
 include("visualization/vizcolors.jl")
 include("visualization/visualize.jl")
-include("visualization/nodeinfo.jl")
-include("visualization/showpath.jl")
+include("visualization/networkviz.jl")
+include("visualization/routingviz.jl")
 
 end

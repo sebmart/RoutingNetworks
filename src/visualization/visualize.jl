@@ -223,4 +223,4 @@ end
 
 
 
-visualize(n::Network) = visualize(NodeInfo(n))
+visualize(n::Network) = visualize(NetworkViz(n))
