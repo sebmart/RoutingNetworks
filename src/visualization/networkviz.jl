@@ -14,7 +14,6 @@ type NetworkViz <: NetworkVisualizer
     roads::Dict{Tuple{Int,Int},Line}
     nodeRadius::Float64
     colors::VizColors
-    nodesToView::Vector{Node}
 
     "node positions KD-tree"
     tree::KDTree
@@ -22,7 +21,7 @@ type NetworkViz <: NetworkVisualizer
     selectedNode::Int
 
     "contructor: initialize kd-tree"
-    function NetworkViz(n::Network)
+    function NetworkViz(n::Network; colors::VizColors=RoadTypeColors())
         obj = new()
         # KD-tree with positions
         dataPos = Array{Float64,2}(2,length(n.nodes))
@@ -34,8 +33,6 @@ type NetworkViz <: NetworkVisualizer
         obj.network = n
         obj.tree = KDTree(dataPos)
         obj.selectedNode = 1
-        obj.colors = RoadTypeColors()
-        obj.nodesToView = n.nodes
         return obj
     end
 end

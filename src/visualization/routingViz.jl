@@ -1,11 +1,12 @@
 ###################################################
 ## routingviz.jl
-## network visualizer - show a given path
-## also add nodeInfo
+## network and routing visualizer
 ###################################################
 
 """
-    `RoutingViz`: Network visualizer that shows a given path. Also adds NodeInfo
+    `RoutingViz`: Network visualizer that also shows routing information.
+    If `P` is clicked, enters path visualization mode.
+
 """
 type RoutingViz <: NetworkVisualizer
     # Mandatory attributes
@@ -15,49 +16,111 @@ type RoutingViz <: NetworkVisualizer
     roads::Dict{Tuple{Int,Int},Line}
     nodeRadius::Float64
     colors::VizColors
-    nodesToView::Vector{Node}
 
 
-    "path to show"
-    path::Vector{Int}
     "basic visualizer"
-    nodeinfo::NetworkViz
+    networkviz::NetworkViz
+    "the routing information"
+    routing::RoutingPaths
+    "if path-mode is on"
+    pathMode::Bool
+    "path is frozen"
+    pathFrozen::Bool
+    "destination node (path destination)"
+    destNode::Int
+    "the path to show"
+    pathRoads::Vector{Edge}
 
     "contructor"
-    function RoutingViz(n::Network, path::Vector{Int})
+    function RoutingViz(r::RoutingPaths)
         obj = new()
-        obj.network  = n
-        obj.path     = path
-        obj.nodeinfo = NodeInfo(n)
-        obj.nodesToView = n.nodes[path]
+        obj.network  = r.network
+        obj.routing = r
+        obj.colors = SpeedColors(r)
+
+        obj.networkviz = NetworkViz(r.network; colors=obj.colors)
         return obj
     end
 end
 
 function visualInit(v::RoutingViz)
     #give visuals to nodeinfo
-    copyVisualData(v,v.nodeinfo)
-    #Change the path
-    for r in pathRoads(v.network,v.path)
-        line = v.roads[r.orig,r.dest]
-        set_fillcolor(line,Color(255,0,0))
-        set_thickness(line, get_thickness(line)*2)
+    copyVisualData(v,v.networkviz)
+
+    v.pathMode = false
+    v.pathFrozen = false
+    v.pathRoads = []
+    v.destNode = 1
+end
+
+function visualStartUpdate(v::RoutingViz,frameTime::Float64)
+    if v.pathMode && !v.pathFrozen
+        mouseCoord = pixel2coords(v.window, get_mousepos(v.window))
+        nodeId = knn(v.networkviz.tree,[Float64(mouseCoord.x),-Float64(mouseCoord.y)],1)[1][1]
+
+        if nodeId != v.destNode
+            if v.destNode != v.networkviz.selectedNode
+                # normal color to previous node
+                set_fillcolor(v.nodes[v.destNode], nodeColor(v.colors, v.network.nodes[v.destNode]))
+                # red for new node
+                set_fillcolor(v.nodes[nodeId], SFML.red)
+            end
+            v.destNode = nodeId
+            set_title(v.window, string("Routing path: ", v.networkviz.selectedNode, " => ", v.destNode))
+            resetPath(v)
+            highlightPath(v)
+        end
     end
 end
 
 function visualScale(v::RoutingViz)
-    # change the path
-    for r in pathRoads(v.network, v.path)
-        line = v.roads[r.orig, r.dest]
-        set_thickness(line, get_thickness(line)*2)
+    # redraw the path
+    highlightPath(v)
+end
+
+
+function visualEvent(v::RoutingViz, event::Event)
+    if get_type(event) == EventType.KEY_PRESSED && get_key(event).key_code == KeyCode.P
+        if v.pathMode
+            v.pathMode = false
+            set_title(v.window, "")
+            resetPath(v)
+            # normal color to previous node
+            set_fillcolor(v.nodes[v.destNode], nodeColor(v.colors, v.network.nodes[v.destNode]))
+        else
+            v.pathMode = true
+            v.pathFrozen = false
+            v.destNode = v.networkviz.selectedNode
+            v.pathRoads = []
+        end
+    elseif v.pathMode
+        if get_type(event) == EventType.MOUSE_BUTTON_PRESSED && get_mousebutton(event).button == MouseButton.LEFT
+            v.pathFrozen = !v.pathFrozen
+        end
+    else
+        visualEvent(v.networkviz,event)
     end
 end
 
-function visualEndUpdate(v::RoutingViz, frameTime::Float64)
-    for road in pathRoads(v.network, v.path)
-        line = v.roads[road.orig, road.dest]
-        draw(v.window,line)
+"""
+    `resetPath` reset the previous path
+"""
+function resetPath(v::RoutingViz)
+    for (o,d) in v.pathRoads
+        set_thickness(v.roads[o,d], get_thickness(v.roads[o,d])/4.)
+        set_fillcolor(v.roads[o,d], roadColor(v.colors, v.network.roads[o,d]))
     end
+    v.pathRoads = []
 end
 
-visualEvent(v::RoutingViz, event::Event) = visualEvent(v.nodeinfo,event)
+"""
+`highlightPath` colors the current path
+"""
+function highlightPath(v::RoutingViz)
+    # first compute new path
+    v.pathRoads = getPathEdges(v.routing, v.networkviz.selectedNode, v.destNode)
+    for (o,d) in v.pathRoads
+        set_thickness(v.roads[o,d], get_thickness(v.roads[o,d])*4)
+        set_fillcolor(v.roads[o,d], SFML.Color(0,0,255))
+    end
+end

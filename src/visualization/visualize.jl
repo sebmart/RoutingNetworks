@@ -13,7 +13,6 @@
     - attribute `roads::Dict{Tuple{Int,Int},Line}`
     - attribute `nodeRadius::Float64` (to scale things)
     - attribute `colors::VizColors` to get all the colors of the visualization
-    - attribute `nodesToView::Vector{Node}` nodes that will be in initial view
 
     can implement
     - method `visualInit` => initialize things
@@ -67,6 +66,7 @@ function copyVisualData(ref::NetworkVisualizer,v::NetworkVisualizer)
     v.window = ref.window
     v.nodes  = ref.nodes
     v.roads  = ref.roads
+    v.colors = ref.colors
 end
 
 """
@@ -101,7 +101,7 @@ function visualize(v::NetworkVisualizer)
     event = Event()
 
     # Set up the initial view
-    minX, maxX, minY, maxY = boundingBox(Tuple{Float64,Float64}[(n.x,n.y) for n in v.nodesToView])
+    minX, maxX, minY, maxY = boundingBox(Tuple{Float64,Float64}[(n.x,n.y) for n in v.network.nodes])
     # Do the Y-axis transformation
     minY, maxY = -maxY, -minY
     networkLength = max(maxX-minX, maxY-minY)
