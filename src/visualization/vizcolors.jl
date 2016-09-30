@@ -41,7 +41,7 @@ RoadTypeColors() = RoadTypeColors(
 roadColor(colors::RoadTypeColors, road::Road) = colors.typecolors[road.roadType]
 
 """
-    `SpeedColors` colors road given their speed.
+    `SpeedColors` colors road given their speed. Good for black and white printing
 """
 type SpeedColors <: VizColors
     "Time of each road"
@@ -81,8 +81,55 @@ SpeedColors(routing.network, routing.times; args...)
 
 function roadColor(colors::SpeedColors, road::Road)
     s = road.distance/colors.roadtimes[road.orig, road.dest]
-    c = round(Int,max(0, min(1, (colors.maxSpeed-s)/(colors.maxSpeed-colors.minSpeed))) * (length(colors.palette)-1)) +1
+    c = round(Int,max(0, min(1, (s - colors.minSpeed)/(colors.maxSpeed-colors.minSpeed))) * (length(colors.palette)-1)) +1
 
     color = colors.palette[c]
     return SFML.Color(round(Int,color.r*255),round(Int,255*color.g),round(Int,255*color.b))
 end
+#
+# """
+#     `RelativeSpeedColors` colors road given their speed.
+# """
+# type SpeedColors <: VizColors
+#     "Time of each road"
+#     roadtimes::AbstractArray{Float64,2}
+#     "speed corresponding to darkest color"
+#     minSpeed::Float64
+#     "speed corresponding to lightest color"
+#     maxSpeed::Float64
+#     "color palette"
+#     palette::Vector{Colors.RGB{Float64}}
+# end
+#
+# function SpeedColors(network::Network, roadtimes::AbstractArray{Float64,2};
+#                      speedRange::Tuple{Real, Real} = (0,0))
+#     minSpeed, maxSpeed = speedRange
+#     minSpeed = float(minSpeed); maxSpeed = float(maxSpeed)
+#
+#     # if not given, minSpeed is the minimal speed in network
+#     if minSpeed == maxSpeed
+#         minSpeed, maxSpeed = Inf, -Inf
+#         for ((o,d),r) in network.roads
+#             s = r.distance/roadtimes[o,d]
+#             s < minSpeed && (minSpeed = s)
+#             s > maxSpeed && (maxSpeed = s)
+#         end
+#         if minSpeed == maxSpeed
+#             minSpeed *= 0.99
+#         end
+#     end
+#
+#     palette = Colors.colormap("Reds")
+#     return SpeedColors(roadtimes, minSpeed, maxSpeed, palette)
+# end
+#
+# SpeedColors(routing::RoutingPaths; args...) =
+# SpeedColors(routing.network, routing.times; args...)
+#
+# function roadColor(colors::SpeedColors, road::Road)
+#     s = road.distance/colors.roadtimes[road.orig, road.dest]
+#     c = round(Int,max(0, min(1, (colors.maxSpeed-s)/(colors.maxSpeed-colors.minSpeed))) * (length(colors.palette)-1)) +1
+#
+#     color = colors.palette[c]
+#     return SFML.Color(round(Int,color.r*255),round(Int,255*color.g),round(Int,255*color.b))
+# end
