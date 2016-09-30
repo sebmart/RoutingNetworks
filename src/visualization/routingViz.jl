@@ -121,6 +121,6 @@ function highlightPath(v::RoutingViz)
     v.pathRoads = getPathEdges(v.routing, v.networkviz.selectedNode, v.destNode)
     for (o,d) in v.pathRoads
         set_thickness(v.roads[o,d], get_thickness(v.roads[o,d])*4)
-        set_fillcolor(v.roads[o,d], SFML.Color(0,0,255))
+        set_fillcolor(v.roads[o,d], SFML.Color(125, 125, 255))
     end
 end
