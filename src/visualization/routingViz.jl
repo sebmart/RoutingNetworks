@@ -32,13 +32,13 @@ type RoutingViz <: NetworkVisualizer
     pathRoads::Vector{Edge}
 
     "contructor"
-    function RoutingViz(r::RoutingPaths)
+    function RoutingViz(r::RoutingPaths; colors::VizColors=RelativeSpeedColors(r))
         obj = new()
         obj.network  = r.network
         obj.routing = r
-        obj.colors = SpeedColors(r)
+        obj.colors = colors
 
-        obj.networkviz = NetworkViz(r.network; colors=obj.colors)
+        obj.networkviz = NetworkViz(r.network; colors=colors)
         return obj
     end
 end

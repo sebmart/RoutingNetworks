@@ -130,7 +130,7 @@ function meanTimes(network::Network, roadtimes::AbstractArray{Float64,2})
         totalDist += network.roads[o, d].distance
     end
     meanspeed = totalDist/totalTime
-    reftimes = spzeros(nv(g),nv(g))
+    reftimes = spzeros(nv(network.graph),nv(network.graph))
     for road in values(network.roads)
         reftimes[road.orig, road.dest] = road.distance/meanspeed
     end
@@ -142,7 +142,7 @@ end
 
 function roadColor(colors::RelativeSpeedColors, road::Road)
     speedratio = colors.roadtimes[road.orig, road.dest]/colors.reftimes[road.orig, road.dest]
-    if colors.speedratio >= 1
+    if speedratio >= 1
         palette = colors.slowpalette
     else
         palette = colors.fastpalette
@@ -150,6 +150,6 @@ function roadColor(colors::RelativeSpeedColors, road::Road)
     end
 
     paletteBin = round(Int, 1 + (length(palette)-1) * (min(speedratio,colors.maxRatio) - 1) / (colors.maxRatio - 1))
-
-    return palette[paletteBin]
+    color = palette[paletteBin]
+    return SFML.Color(round(Int,color.r*255),round(Int,255*color.g),round(Int,255*color.b))
 end
