@@ -40,10 +40,17 @@ RoadTypeColors() = RoadTypeColors(
 
 roadColor(colors::RoadTypeColors, road::Road) = colors.typecolors[road.roadType]
 
+
+"""
+    `RoutingColors` colors that use road speed information.
+    Must have a `roadtimes` attribute.
+"""
+abstract RoutingColors <: VizColors
+
 """
     `SpeedColors` colors road given their speed. Good for black and white printing
 """
-type SpeedColors <: VizColors
+type SpeedColors <: RoutingColors
     "Time of each road"
     roadtimes::AbstractArray{Float64,2}
     "speed corresponding to darkest color"
@@ -90,7 +97,7 @@ end
 """
     `RelativeSpeedColors` colors road given set of reference times.
 """
-type RelativeSpeedColors <: VizColors
+type RelativeSpeedColors <: RoutingColors
     "Time of each road"
     roadtimes::AbstractArray{Float64,2}
     "reference time of each road"

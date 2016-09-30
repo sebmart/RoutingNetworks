@@ -73,10 +73,12 @@ function visualStartUpdate(v::RoutingViz,frameTime::Float64)
     end
 end
 
-function visualScale(v::RoutingViz)
+function visualRedraw(v::RoutingViz)
+    visualRedraw(v.networkviz)
     if v.pathMode
         # redraw the path
         highlightPath(v)
+        set_fillcolor(v.nodes[v.destNode], SFML.red)
     end
 end
 

@@ -18,7 +18,7 @@
     - method `visualInit` => initialize things
     - method `visualEvent`  => receive one event (may be 0 or several per frame)
     - method `visualUpdate` => called each frame, to update and draw objects
-    - method `visualScale` => called when change in nodeRadius
+    - method `visualRedraw` => called when redrawing
 """
 abstract NetworkVisualizer
 
@@ -49,9 +49,9 @@ function visualEndUpdate(v::NetworkVisualizer,frameTime::Float64)
 end
 
 """
-    `visualScale` => called when change in nodeRadius
+    `visualRedraw` => called when change in nodeRadius
 """
-function visualScale(v::NetworkVisualizer)
+function visualRedraw(v::NetworkVisualizer)
 end
 
 function Base.show(io::IO, viz::NetworkVisualizer)
@@ -79,20 +79,16 @@ function visualize(v::NetworkVisualizer)
 
     #create nodes
     v.nodes = CircleShape[CircleShape() for i in 1:length(v.network.nodes)]
-    for (i,n) in enumerate(v.nodes)
-        set_fillcolor(n, nodeColor(v.colors, v.network.nodes[i]))
-    end
 
     #create roads
     v.roads = Dict{Tuple{Int,Int},Line}()
     for ((o,d),r) in v.network.roads
         road = Line(Vector2f(0.,0.),Vector2f(1000.,0.))
-        set_fillcolor(road,roadColor(v.colors, r))
         v.roads[o,d] = road
     end
 
     # set geometry
-    setSizesAndPositions!(v)
+    redraw!(v)
 
     # Defines the window, an event listener, and view
     window_w, window_h = 1200,1200
@@ -135,12 +131,12 @@ function visualize(v::NetworkVisualizer)
                     close(v.window)
                 elseif k == KeyCode.A
                     v.nodeRadius *= 1.3
-                    setSizesAndPositions!(v)
-                    visualScale(v)
+                    redraw!(v)
+                    visualRedraw(v)
                 elseif k == KeyCode.S
                     v.nodeRadius /= 1.3
-                    setSizesAndPositions!(v)
-                    visualScale(v)
+                    redraw!(v)
+                    visualRedraw(v)
                 elseif k == KeyCode.D
                     hideNodes = !hideNodes
                 end
@@ -190,9 +186,9 @@ function visualize(v::NetworkVisualizer)
 end
 
 """
-    `setSizesAndPosition!` is a helper function that updates all the coordinates
+    `redraw!` is a helper function that updates all the coordinates
 """
-function setSizesAndPositions!(v::NetworkVisualizer)
+function redraw!(v::NetworkVisualizer)
     n = v.network
     # create position vectors (inverse y axe for plotting)
     positions = Vector2f[Vector2f(node.x,-node.y) for node in n.nodes]
@@ -204,21 +200,20 @@ function setSizesAndPositions!(v::NetworkVisualizer)
     for (i, no) in enumerate(v.nodes)
         set_radius(no, v.nodeRadius)
         set_position(no, positions[i] - Vector2f(v.nodeRadius,v.nodeRadius))
+        set_fillcolor(no, nodeColor(v.colors, v.network.nodes[i]))
     end
 
     #positions roads
     #SFML bug with lines! have to recreate them...
-    roads = Dict{Tuple{Int,Int},Line}()
     for ((o,d),r) in v.network.roads
         x = positions[o].y - positions[d].y
         y = positions[d].x - positions[o].x
         l = sqrt(x^2+y^2); x = x/l; y = y/l
         offset = Vector2f(x*v.nodeRadius*3./5.,y*v.nodeRadius*3./5.)
         road = Line(positions[o]+offset,positions[d]+offset, 4*v.nodeRadius/5.)
-        set_fillcolor(road,get_fillcolor(v.roads[o,d]))
-        roads[o,d] = road
+        set_fillcolor(road,roadColor(v.colors, r))
+        v.roads[o,d] = road
     end
-    v.roads = roads
 end
 
 

@@ -33,6 +33,7 @@ type NetworkViz <: NetworkVisualizer
         obj.network = n
         obj.tree = KDTree(dataPos)
         obj.selectedNode = 1
+        obj.colors = colors
         return obj
     end
 end
@@ -48,4 +49,8 @@ function visualEvent(v::NetworkViz, event::Event)
         v.selectedNode = id
         set_title(v.window, "Node : $id in: $(in_neighbors(v.network.graph,id)) out: $(out_neighbors(v.network.graph,id))")
     end
+end
+
+function visualRedraw(v::NetworkViz)
+    set_fillcolor(v.nodes[v.selectedNode], SFML.red)
 end
