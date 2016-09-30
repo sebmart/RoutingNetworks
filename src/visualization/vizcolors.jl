@@ -86,50 +86,70 @@ function roadColor(colors::SpeedColors, road::Road)
     color = colors.palette[c]
     return SFML.Color(round(Int,color.r*255),round(Int,255*color.g),round(Int,255*color.b))
 end
-#
-# """
-#     `RelativeSpeedColors` colors road given their speed.
-# """
-# type SpeedColors <: VizColors
-#     "Time of each road"
-#     roadtimes::AbstractArray{Float64,2}
-#     "speed corresponding to darkest color"
-#     minSpeed::Float64
-#     "speed corresponding to lightest color"
-#     maxSpeed::Float64
-#     "color palette"
-#     palette::Vector{Colors.RGB{Float64}}
-# end
-#
-# function SpeedColors(network::Network, roadtimes::AbstractArray{Float64,2};
-#                      speedRange::Tuple{Real, Real} = (0,0))
-#     minSpeed, maxSpeed = speedRange
-#     minSpeed = float(minSpeed); maxSpeed = float(maxSpeed)
-#
-#     # if not given, minSpeed is the minimal speed in network
-#     if minSpeed == maxSpeed
-#         minSpeed, maxSpeed = Inf, -Inf
-#         for ((o,d),r) in network.roads
-#             s = r.distance/roadtimes[o,d]
-#             s < minSpeed && (minSpeed = s)
-#             s > maxSpeed && (maxSpeed = s)
-#         end
-#         if minSpeed == maxSpeed
-#             minSpeed *= 0.99
-#         end
-#     end
-#
-#     palette = Colors.colormap("Reds")
-#     return SpeedColors(roadtimes, minSpeed, maxSpeed, palette)
-# end
-#
-# SpeedColors(routing::RoutingPaths; args...) =
-# SpeedColors(routing.network, routing.times; args...)
-#
-# function roadColor(colors::SpeedColors, road::Road)
-#     s = road.distance/colors.roadtimes[road.orig, road.dest]
-#     c = round(Int,max(0, min(1, (colors.maxSpeed-s)/(colors.maxSpeed-colors.minSpeed))) * (length(colors.palette)-1)) +1
-#
-#     color = colors.palette[c]
-#     return SFML.Color(round(Int,color.r*255),round(Int,255*color.g),round(Int,255*color.b))
-# end
+
+"""
+    `RelativeSpeedColors` colors road given set of reference times.
+"""
+type RelativeSpeedColors <: VizColors
+    "Time of each road"
+    roadtimes::AbstractArray{Float64,2}
+    "reference time of each road"
+    reftimes::AbstractArray{Float64,2}
+    "color palette for slow roads"
+    slowpalette::Vector{Colors.RGB{Float64}}
+    "color palette for fast roads"
+    fastpalette::Vector{Colors.RGB{Float64}}
+    "ratio to baseline corresponding to extremes of color palette"
+    maxRatio::Float64
+end
+
+function RelativeSpeedColors(network::Network,
+                             roadtimes::AbstractArray{Float64,2},
+                             reftimes::AbstractArray{Float64,2} = meanTimes(network, roadtimes);
+                             maxRatio::Real=3)
+    maxRatio = float(maxRatio)
+    slow = HSL(0,1.,.3)
+    normal = HSL(60, .5, 0.8)
+    fast =  HSL(120,0.7,.5)
+    slowpalette = linspace(normal, slow)
+    fastpalette = linspace(normal, fast)
+    return RelativeSpeedColors(roadtimes, reftimes, slowpalette, fastpalette, maxRatio)
+end
+RelativeSpeedColors(r::RoutingPaths, reftimes::AbstractArray{Float64,2} = meanTimes(r.network, r.times); args...) =
+RelativeSpeedColors(r.network, r.times, reftimes; args...)
+
+
+"""
+    `meanTimes` return times corresponding to mean speed.
+"""
+function meanTimes(network::Network, roadtimes::AbstractArray{Float64,2})
+    totalTime = 0.
+    totalDist = 0.
+    for (o,d) in edges(network.graph)
+        totalTime += roadtimes[o, d]
+        totalDist += network.roads[o, d].distance
+    end
+    meanspeed = totalDist/totalTime
+    reftimes = spzeros(nv(g),nv(g))
+    for road in values(network.roads)
+        reftimes[road.orig, road.dest] = road.distance/meanspeed
+    end
+    return reftimes
+end
+
+
+
+
+function roadColor(colors::RelativeSpeedColors, road::Road)
+    speedratio = colors.roadtimes[road.orig, road.dest]/colors.reftimes[road.orig, road.dest]
+    if colors.speedratio >= 1
+        palette = colors.slowpalette
+    else
+        palette = colors.fastpalette
+        speedratio = 1/speedratio
+    end
+
+    paletteBin = round(Int, 1 + (length(palette)-1) * (min(speedratio,colors.maxRatio) - 1) / (colors.maxRatio - 1))
+
+    return palette[paletteBin]
+end

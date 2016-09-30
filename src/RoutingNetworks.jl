@@ -23,7 +23,7 @@ export roadTypeRouting, randomTimeRouting, maxSpeedTimes, uniformTimes, randomTi
 #visualization
 export NetworkVisualizer, NetworkViz, RoutingViz
 export visualize, visualInit, visualEvent, visualUpdate, visualScale, copyVisualData
-export VizColors, RoadTypeColors, SpeedColors
+export VizColors, RoadTypeColors, SpeedColors, RelativeSpeedColors
 
 #tools
 export boundingBox, distanceGeo, distanceCoord, pointInsidePolygon, toENU, nRoads, nNodes
