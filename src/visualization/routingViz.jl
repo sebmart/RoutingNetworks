@@ -29,7 +29,7 @@ type RoutingViz <: NetworkVisualizer
     "destination node (path destination)"
     destNode::Int
     "the path to show"
-    pathRoads::Vector{Edge}
+    path::Vector{Line}
 
     "contructor"
     function RoutingViz(r::RoutingPaths; colors::VizColors=RelativeSpeedColors(r))
@@ -49,7 +49,6 @@ function visualInit(v::RoutingViz)
 
     v.pathMode = false
     v.pathFrozen = false
-    v.pathRoads = []
     v.destNode = 1
 end
 
@@ -67,8 +66,15 @@ function visualStartUpdate(v::RoutingViz,frameTime::Float64)
             end
             v.destNode = nodeId
             set_title(v.window, string("Routing path: ", v.networkviz.selectedNode, " => ", v.destNode))
-            resetPath(v)
-            highlightPath(v)
+            drawPath(v)
+        end
+    end
+end
+
+function visualEndUpdate(v::RoutingViz, frameTime::Float64)
+    if v.pathMode #print the path on top of other roads
+        for segment in v.path
+            draw(v.window, segment)
         end
     end
 end
@@ -77,7 +83,7 @@ function visualRedraw(v::RoutingViz)
     visualRedraw(v.networkviz)
     if v.pathMode
         # redraw the path
-        highlightPath(v)
+        drawPath(v)
         set_fillcolor(v.nodes[v.destNode], SFML.red)
     end
 end
@@ -88,14 +94,13 @@ function visualEvent(v::RoutingViz, event::Event)
         if v.pathMode
             v.pathMode = false
             set_title(v.window, "")
-            resetPath(v)
             # normal color to previous node
             set_fillcolor(v.nodes[v.destNode], nodeColor(v.colors, v.network.nodes[v.destNode]))
         else
             v.pathMode = true
             v.pathFrozen = false
             v.destNode = v.networkviz.selectedNode
-            v.pathRoads = []
+            v.path = []
         end
     elseif v.pathMode
         if get_type(event) == EventType.MOUSE_BUTTON_PRESSED && get_mousebutton(event).button == MouseButton.LEFT
@@ -107,24 +112,12 @@ function visualEvent(v::RoutingViz, event::Event)
 end
 
 """
-    `resetPath` reset the previous path
+    `drawPath` create the path drawings
 """
-function resetPath(v::RoutingViz)
-    for (o,d) in v.pathRoads
-        set_thickness(v.roads[o,d], get_thickness(v.roads[o,d])/4.)
-        set_fillcolor(v.roads[o,d], roadColor(v.colors, v.network.roads[o,d]))
-    end
-    v.pathRoads = []
-end
-
-"""
-`highlightPath` colors the current path
-"""
-function highlightPath(v::RoutingViz)
-    # first compute new path
-    v.pathRoads = getPathEdges(v.routing, v.networkviz.selectedNode, v.destNode)
-    for (o,d) in v.pathRoads
-        set_thickness(v.roads[o,d], get_thickness(v.roads[o,d])*4)
-        set_fillcolor(v.roads[o,d], SFML.Color(0, 0, 125))
+function drawPath(v::RoutingViz)
+    v.path = [Line(copy(v.roads[o, d].rect)) for (o,d) in getPathEdges(v.routing, v.networkviz.selectedNode, v.destNode)]
+    for line in v.path
+        set_thickness(line, get_thickness(line)*4.)
+        set_fillcolor(line, SFML.Color(0, 0, 125))
     end
 end

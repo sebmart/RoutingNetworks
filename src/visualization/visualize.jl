@@ -87,8 +87,7 @@ function visualize(v::NetworkVisualizer)
         v.roads[o,d] = road
     end
 
-    # set geometry
-    redraw!(v)
+
 
     # Defines the window, an event listener, and view
     window_w, window_h = 1200,1200
@@ -108,7 +107,7 @@ function visualize(v::NetworkVisualizer)
     hideNodes = false
     # init visualizer
     visualInit(v)
-
+    redraw!(v)
     clock = Clock()
     # gc_enable(false)
     while isopen(v.window)
@@ -132,11 +131,9 @@ function visualize(v::NetworkVisualizer)
                 elseif k == KeyCode.A
                     v.nodeRadius *= 1.3
                     redraw!(v)
-                    visualRedraw(v)
                 elseif k == KeyCode.S
                     v.nodeRadius /= 1.3
                     redraw!(v)
-                    visualRedraw(v)
                 elseif k == KeyCode.D
                     hideNodes = !hideNodes
                 end
@@ -214,6 +211,7 @@ function redraw!(v::NetworkVisualizer)
         set_fillcolor(road,roadColor(v.colors, r))
         v.roads[o,d] = road
     end
+    visualRedraw(v)
 end
 
 
