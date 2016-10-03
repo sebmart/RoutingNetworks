@@ -1,19 +1,19 @@
 ###################################################
-## nodeinfo.jl
+## networkviz.jl
 ## add point&click node information to visual (default visualizer)
 ###################################################
 
 """
-    `NodeInfo`: NetworkVisualizer that shows node information in title bar after click
+    `NetworkViz`: Basic NetworkVisualizer. Shows node information in title bar after click
 """
-type NodeInfo <: NetworkVisualizer
+type NetworkViz <: NetworkVisualizer
     # Mandatory attributes
     network::Network
     window::RenderWindow
     nodes::Vector{CircleShape}
     roads::Dict{Tuple{Int,Int},Line}
     nodeRadius::Float64
-    nodesToView::Vector{Node}
+    colors::VizColors
 
     "node positions KD-tree"
     tree::KDTree
@@ -21,7 +21,7 @@ type NodeInfo <: NetworkVisualizer
     selectedNode::Int
 
     "contructor: initialize kd-tree"
-    function NodeInfo(n::Network)
+    function NetworkViz(n::Network; colors::VizColors=RoadTypeColors())
         obj = new()
         # KD-tree with positions
         dataPos = Array{Float64,2}(2,length(n.nodes))
@@ -33,20 +33,24 @@ type NodeInfo <: NetworkVisualizer
         obj.network = n
         obj.tree = KDTree(dataPos)
         obj.selectedNode = 1
-        obj.nodesToView = n.nodes
+        obj.colors = colors
         return obj
     end
 end
 
-function visualEvent(v::NodeInfo, event::Event)
+function visualEvent(v::NetworkViz, event::Event)
     if get_type(event) == EventType.MOUSE_BUTTON_PRESSED && get_mousebutton(event).button == MouseButton.LEFT
         x,y = get_mousebutton(event).x, get_mousebutton(event).y
         coord = pixel2coords(v.window,Vector2i(x,y))
 
         id = knn(v.tree,[Float64(coord.x),-Float64(coord.y)],1)[1][1]
-        set_fillcolor(v.nodes[v.selectedNode], SFML.Color(0,0,0,150))
+        set_fillcolor(v.nodes[v.selectedNode], nodeColor(v.colors, v.network.nodes[v.selectedNode]))
         set_fillcolor(v.nodes[id], SFML.red)
         v.selectedNode = id
         set_title(v.window, "Node : $id in: $(in_neighbors(v.network.graph,id)) out: $(out_neighbors(v.network.graph,id))")
     end
+end
+
+function visualRedraw(v::NetworkViz)
+    set_fillcolor(v.nodes[v.selectedNode], SFML.red)
 end
