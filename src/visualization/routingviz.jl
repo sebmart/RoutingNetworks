@@ -6,6 +6,7 @@
 """
     `RoutingViz`: Network visualizer that also shows routing information.
     If `P` is clicked, enters path visualization mode.
+    The shortest path will be shown, starting from the selected node. click to fix the path.
 
 """
 type RoutingViz <: NetworkVisualizer
