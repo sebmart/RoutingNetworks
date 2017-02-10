@@ -182,6 +182,9 @@ function visualize(v::NetworkVisualizer)
     # gc_enable()
 end
 
+visualize(n::Network) = visualize(NetworkViz(n))
+visualize(r::RoutingPaths) = visualize(RoutingViz(r))
+
 """
     `redraw!` is a helper function that updates all the coordinates
 """
@@ -213,7 +216,3 @@ function redraw!(v::NetworkVisualizer)
     end
     visualRedraw(v)
 end
-
-
-
-visualize(n::Network) = visualize(NetworkViz(n))
