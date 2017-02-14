@@ -145,8 +145,6 @@ function meanTimes(network::Network, roadtimes::AbstractArray{Float64,2})
 end
 
 
-
-
 function roadColor(colors::RelativeSpeedColors, road::Road)
     speedratio = colors.roadtimes[road.orig, road.dest]/colors.reftimes[road.orig, road.dest]
     if speedratio >= 1
