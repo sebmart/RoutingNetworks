@@ -23,19 +23,27 @@ function randomTimeRouting(n::Network)
     return RoutingPaths(n, times)
 end
 
+
+"""
+    `fixedSpeedTimes` : given a speeds for each road-type, returns times for the whole network
+    speeds are kph
+"""
+function fixedSpeedTimes(n::Network, speeds::Vector{Float64})
+    g = n.graph
+    times = spzeros(nv(g),nv(g))
+    for ((o,d),r) in n.roads
+        times[o,d] = 3.6*r.distance/speeds[r.roadType]
+    end
+    return times
+end
+
 """
     `maxSpeedTimes`
     - returns road times corresponding to maximum allowed speed (sparse array)
     - `maxspeed`: km/h maximum speeds for each road-type
 """
-function maxSpeedTimes(n::Network; maxspeed::Vector{Float64} = [130.,110.,90.,50.,50.,20.,0.,0.])
-    g = n.graph
-    times = spzeros(nv(g),nv(g))
-    for ((o,d),r) in n.roads
-        times[o,d] = 3.6*r.distance/maxspeed[r.roadType]
-    end
-    return times
-end
+maxSpeedTimes(n::Network; maxspeed::Vector{Float64} = [130.,110.,90.,50.,50.,20.,0.,0.]) =
+fixedSpeedTimes(n, maxspeed)
 
 """
     `uniformTimes`
