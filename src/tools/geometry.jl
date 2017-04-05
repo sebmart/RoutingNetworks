@@ -66,13 +66,11 @@ end
 """
     `toENU`, projects latitude and longitude to ENU coordinate system
 """
-function toENU{T<:AbstractFloat}(lon::T, lat::T, center::Tuple{T,T})
+function toENU(lon, lat, center)
     enu = ENU(LLA(lat,lon), LLA(center[2],center[1]))
     return enu.east, enu.north
 end
-toENU(lon::Float32, lat::Float32, n::Network) = toENU(lon, lat, n.projcenter)
-toENU(lon::Float64, lat::Float64, n::Network) = toENU(convert(Float32,lon), convert(Float32,lat), n.projcenter)
-
+toENU(lon, lat, n::Network) = toENU(lon, lat, n.projcenter)
 """
     `updateProjection`
     updates the (x,y) projection of the nodes of the network given their latitude/longitude

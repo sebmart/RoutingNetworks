@@ -25,6 +25,8 @@ export NetworkVisualizer, NetworkViz, RoutingViz
 export visualize, visualInit, visualEvent, visualUpdate, visualRedraw, copyVisualData, redraw!
 export VizColors, RoutingColors, RoadTypeColors, SpeedColors, RelativeSpeedColors
 
+# projection onto network
+export NetworkProjector, NetworkPosition
 #tools
 export boundingBox, distanceGeo, distanceCoord, pointInsidePolygon, toENU, nRoads, nNodes
 
