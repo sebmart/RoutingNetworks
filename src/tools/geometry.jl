@@ -43,7 +43,7 @@ end
 """
     Check is a point is inside a polygon
 """
-function pointInsidePolygon{T<:AbstractFloat}(x::T,y::T,poly::Vector{Tuple{T,T}})
+function pointInsidePolygon{T<:AbstractFloat}(x::AbstractFloat,y::AbstractFloat,poly::Vector{Tuple{T,T}})
     n = length(poly)
     inside =false
 
