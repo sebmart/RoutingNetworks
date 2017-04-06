@@ -32,6 +32,7 @@ export boundingBox, distanceGeo, distanceCoord, pointInsidePolygon, toENU, nRoad
 
 include("network.jl")
 
+include("networkposition.jl")
 
 include("tools/geometry.jl")
 include("tools/geodesy.jl")
@@ -53,5 +54,6 @@ include("visualization/vizcolors.jl")
 include("visualization/visualize.jl")
 include("visualization/networkviz.jl")
 include("visualization/routingviz.jl")
+
 
 end
