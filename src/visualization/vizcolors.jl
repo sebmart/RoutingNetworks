@@ -40,6 +40,24 @@ RoadTypeColors() = RoadTypeColors(
 
 roadColor(colors::RoadTypeColors, road::Road) = colors.typecolors[road.roadType]
 
+"""
+    `FadedColors` is just road-type with custom transparency
+"""
+type FadedColors <: VizColors
+    typecolors::Vector{SFML.Color}
+    transp::Int
+end
+nodeColor(colors::FadedColors, node::Node) = SFML.Color(0,0,0, colors.transp)
+
+function FadedColors(transp)
+    a = round(Int, transp*255)
+    FadedColors(
+        [SFML.Color(0,255,0, a)  , SFML.Color(55,200,0, a), SFML.Color(105,150,0, a),
+         SFML.Color(150,105, a), SFML.Color(0,0,125, a) , SFML.Color(0,0,125, a)  ,
+         SFML.Color(0,0,125, a)  , SFML.Color(0,0,125, a)], a)
+end
+roadColor(colors::FadedColors, road::Road) = colors.typecolors[road.roadType]
+
 
 """
     `RoutingColors` colors that use road speed information.
