@@ -76,6 +76,14 @@ function roadDistances(n::Network)
 end
 
 """
+    Returns walking road distances (undirected)
+"""
+function walkingDistances(n::Network)
+    dists = roadDistances(n)
+    return max(dists,dists')
+end
+
+"""
     Gives access to the timing matrix of the graph after path computation
 """
 function getPathTimes(r::RoutingPaths)

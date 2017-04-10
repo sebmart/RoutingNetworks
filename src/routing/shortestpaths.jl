@@ -94,3 +94,23 @@ function parallelShortestPaths2!(r::RoutingPaths, batch_number::Int=10)
     r.pathPrevious=sdata(parents)
     return r
 end
+
+"""
+    walking time between i and j, doesn't use routing paths,
+    applies dijkstra to undirected version of graph
+"""
+function walkingtime(n::Network, i::Int, j::Int, 
+                     times::AbstractArray{Float64,2} = walkingDistances(n))
+    d = dijkstra_shortest_paths(Graph(n.graph), i, times)
+    return d.dists[j]
+end
+
+"""
+    returns nodes that are within provided walkingTime of node i
+    doesn't use routing paths and applies dijkstra to undirected version of graph
+"""
+function walkingNodes(n::Network, i::Int, walkingTime::Float64,
+                      times::AbstractArray{Float64,2} = walkingDistances(n))
+    d = dijkstra_shortest_paths(Graph(n.graph), i, times)
+    return find(d.dists .< walkingTime)
+end
