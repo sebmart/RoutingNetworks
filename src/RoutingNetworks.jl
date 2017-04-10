@@ -23,7 +23,7 @@ export roadTypeRouting, randomTimeRouting, fixedSpeedTimes, maxSpeedTimes, unifo
 #visualization
 export NetworkVisualizer, NetworkViz, RoutingViz
 export visualize, visualInit, visualEvent, visualUpdate, visualRedraw, copyVisualData, redraw!
-export VizColors, RoutingColors, RoadTypeColors, SpeedColors, RelativeSpeedColors
+export VizColors, RoutingColors, RoadTypeColors, FadedColors, SpeedColors, RelativeSpeedColors
 
 # projection onto network
 export NetworkProjector, NetworkPosition
