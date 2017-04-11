@@ -50,3 +50,7 @@ function NetworkPosition(proj::NetworkProjector, lat, lon)
     x, y = toENU(lon, lat, proj.network)
     return NetworkPosition(lat, lon, x, y, nearestNode(proj, x, y))
 end
+
+function distanceGeo(n1::NetworkPosition, n2::NetworkPosition)
+    return distanceGeo(n1.lon, n1.lat, n2.lon, n2.lat)
+end
