@@ -99,7 +99,7 @@ end
     walking time between i and j, doesn't use routing paths,
     applies dijkstra to undirected version of graph
 """
-function walkingtime(n::Network, i::Int, j::Int, 
+function walkingtime(n::Network, i::Int, j::Int,
                      times::AbstractArray{Float64,2} = walkingDistances(n))
     d = dijkstra_shortest_paths(Graph(n.graph), i, times)
     return d.dists[j]
@@ -113,4 +113,16 @@ function walkingNodes(n::Network, i::Int, walkingTime::Float64,
                       times::AbstractArray{Float64,2} = walkingDistances(n))
     d = dijkstra_shortest_paths(Graph(n.graph), i, times)
     return find(d.dists .< walkingTime)
+end
+
+
+"""
+    Using Dijkstra, returns the all pair shortest path for a subset of the nodes as
+    origins and destinations
+"""
+function allPairTimes(n::Network, origins::Vector{Int}, dests::Vector{Int}, times::AbstractArray{Float64, 2})
+    allPairTimes = Matrix{Float64}(length(origins), length(dests))
+    for o in origins
+        allPairTimes[o,:] = dijkstra_shortest_paths(n.graph, o, times)[dests]
+    end
 end

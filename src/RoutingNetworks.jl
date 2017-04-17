@@ -19,6 +19,7 @@ export RoutingPaths, roadDistances, getPathTimes, getPath, getPathEdges, shortes
 export pathTime, pathEdgesTime, getPathWithTimes, longestPathTime
 export parallelShortestPaths!, traveltime, pathRoads
 export roadTypeRouting, randomTimeRouting, fixedSpeedTimes, maxSpeedTimes, uniformTimes, randomTimes
+export allPairTimes
 
 #visualization
 export NetworkVisualizer, NetworkViz, RoutingViz
