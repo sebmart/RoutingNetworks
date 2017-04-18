@@ -106,11 +106,13 @@ function walkingtime(n::Network, i::Int, j::Int,
 end
 
 """
-    returns nodes that are within provided walkingTime of node i
+    returns nodes that are within provided walkingTime of node i, along 
+    with all walking times computed by dijkstra
     doesn't use routing paths and applies dijkstra to undirected version of graph
 """
 function walkingNodes(n::Network, i::Int, walkingTime::Float64,
                       times::AbstractArray{Float64,2} = walkingDistances(n))
     d = dijkstra_shortest_paths(Graph(n.graph), i, times)
-    return find(d.dists .< walkingTime)
+    nodes = find(d.dists .< walkingTime)
+    return nodes, d.dists[nodes]
 end
