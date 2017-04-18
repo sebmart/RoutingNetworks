@@ -22,7 +22,7 @@ end
 """
 distanceGeo(pt1::Node, pt2::Node) = distanceGeo(pt1.lon, pt1.lat, pt2.lon, pt2.lat)
 
-function distanceGeo{T<:AbstractFloat}(lon1::T, lat1::T, lon2::T, lat2::T)
+function distanceGeo(lon1, lat1, lon2, lat2)
     dLat = toradians(lat2 - lat1)
     dLon = toradians(lon2 - lon1)
     lat1 = toradians(lat1)

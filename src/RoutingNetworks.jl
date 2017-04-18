@@ -19,6 +19,7 @@ export RoutingPaths, roadDistances, getPathTimes, getPath, getPathEdges, shortes
 export pathTime, pathEdgesTime, getPathWithTimes, longestPathTime
 export parallelShortestPaths!, traveltime, pathRoads
 export roadTypeRouting, randomTimeRouting, fixedSpeedTimes, maxSpeedTimes, uniformTimes, randomTimes
+export allPairTimes
 
 #visualization
 export NetworkVisualizer, NetworkViz, RoutingViz
@@ -26,7 +27,7 @@ export visualize, visualInit, visualEvent, visualUpdate, visualRedraw, copyVisua
 export VizColors, RoutingColors, RoadTypeColors, FadedColors, SpeedColors, RelativeSpeedColors
 
 # projection onto network
-export NetworkProjector, NetworkPosition
+export NetworkProjector, NetworkPosition, NodeProjector, NodePosition, x, y, lat, lon, node, distToNode
 #tools
 export boundingBox, distanceGeo, distanceCoord, pointInsidePolygon, toENU, nRoads, nNodes
 
