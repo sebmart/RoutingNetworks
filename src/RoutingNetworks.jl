@@ -27,7 +27,8 @@ export visualize, visualInit, visualEvent, visualUpdate, visualRedraw, copyVisua
 export VizColors, RoutingColors, RoadTypeColors, FadedColors, SpeedColors, RelativeSpeedColors
 
 # projection onto network
-export NetworkProjector, NetworkPosition, NodeProjector, NodePosition, x, y, lat, lon, node, distToNode
+export NetworkProjector, NetworkPosition, NodeProjector, NodePosition, RoadProjector, RoadPosition
+export x, y, lat, lon, node, distToNode
 #tools
 export boundingBox, distanceGeo, distanceCoord, pointInsidePolygon, toENU, nRoads, nNodes
 
