@@ -29,7 +29,7 @@ distanceGeo(p1::NetworkPosition, p2::NetworkPosition) =
 """
     A simple nearest-node projection to the network. Fast to compute.
 """
-immutable NodePosition
+immutable NodePosition <: NetworkPosition
     "Latitude"
     lat::Float64
     "Longitude"
@@ -65,7 +65,7 @@ function NodeProjector(n::Network)
        nodePos[1,i] = node.x
        nodePos[2,i] = node.y
     end
-    return NetworkProjector(n,KDTree(nodePos))
+    return NodeProjector(n,KDTree(nodePos))
 end
 """
     Returns the nearest node id with respect to a x/y position
@@ -77,5 +77,5 @@ nearestNode(proj::NodeProjector, x, y) = knn(proj.tree,[x,y],1)[1][1]
 """
 function NetworkPosition(proj::NodeProjector, lat, lon)
     x, y = toENU(lon, lat, proj.network)
-    return NodeProjector(lat, lon, x, y, nearestNode(proj, x, y))
+    return NodePosition(lat, lon, x, y, nearestNode(proj, x, y))
 end
