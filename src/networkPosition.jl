@@ -103,9 +103,9 @@ end
 
 function node(pos::RoadPosition)
     if pos.fraction <=0.5
-        return nodeO
+        return pos.nodeO
     else
-        return nodeD
+        return pos.nodeD
     end
 end
 """
@@ -245,4 +245,12 @@ function distToProj(n::Network, pos::RoadPosition)
     projlat = nO.lat + pos.fraction*(nD.x-nO.x)
     projlon = nO.lon + pos.fraction*(nD.y-nO.y)
     return distanceGeo(projlon, projlat, pos.lon, pos.lat)
+end
+
+function projXY(n::Network, pos::RoadPosition)
+    nO = n.nodes[pos.nodeO]
+    nD = n.nodes[pos.nodeD]
+    x = nO.x + pos.fraction*(nD.x-nO.x)
+    y = nO.y + pos.fraction*(nD.y-nO.y)
+    return x,y
 end
