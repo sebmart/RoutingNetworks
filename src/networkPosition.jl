@@ -103,9 +103,9 @@ end
 
 function node(pos::RoadPosition)
     if pos.fraction <=0.5
-        return nodeO
+        return pos.nodeO
     else
-        return nodeD
+        return pos.nodeD
     end
 end
 """
