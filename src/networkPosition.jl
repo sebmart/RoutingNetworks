@@ -242,8 +242,8 @@ end
 function distToProj(n::Network, pos::RoadPosition)
     nO = n.nodes[pos.nodeO]
     nD = n.nodes[pos.nodeD]
-    projlat = nO.lat + pos.fraction*(nD.x-nO.x)
-    projlon = nO.lon + pos.fraction*(nD.y-nO.y)
+    projlat = nO.lat + pos.fraction*(nD.lat-nO.lat)
+    projlon = nO.lon + pos.fraction*(nD.lon-nO.lon)
     return distanceGeo(projlon, projlat, pos.lon, pos.lat)
 end
 
