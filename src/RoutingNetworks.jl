@@ -28,7 +28,7 @@ export VizColors, RoutingColors, RoadTypeColors, FadedColors, SpeedColors, Relat
 
 # projection onto network
 export NetworkProjector, NetworkPosition, NodeProjector, NodePosition, RoadProjector, RoadPosition
-export x, y, lat, lon, node, distToNode
+export x, y, lat, lon, node, distToProj
 #tools
 export boundingBox, distanceGeo, distanceCoord, pointInsidePolygon, toENU, nRoads, nNodes
 
