@@ -19,7 +19,8 @@ function subsetNetwork(n::Network, keepN::Vector{Int})
     for (s,d) in keys(n.roads)
         if haskey(nodesIndices,s) && haskey(nodesIndices,d)
             add_edge!(g,nodesIndices[s],nodesIndices[d])
-            roads[nodesIndices[s],nodesIndices[d]] = n.roads[s,d]
+            prevRoad = n.roads[s,d]
+            roads[nodesIndices[s],nodesIndices[d]] = Road(nodesIndices[s], nodesIndices[d], prevRoad.distance, prevRoad.roadType)
         end
     end
 
@@ -153,4 +154,44 @@ function intersections(n::Network)
     n2 = Network(g2,nodes,roads)
     updateProjection!(n2)
     return n2
+end
+
+"""
+    Take a list of RoadPosition, and returns the list of nodes that are needed to
+    drive/walk from any position to any other position.
+"""
+function connectingNodes(n::Network, positions::Vector{RoadPosition})
+    cartimes = maxSpeedTimes(n)
+    dists = roadDistances(n)
+    walktimes = max(dists, dists')
+    walkgraph = Graph(n.graph)
+    allNodes = Set{Int}()
+    for p in positions
+        push!(allNodes, p.nodeO)
+        push!(allNodes, p.nodeD)
+    end
+    allNodes = sort(collect(allNodes))
+
+    seenNodes = Set{Int}()
+    println(length(allNodes))
+    for (i, origin) in enumerate(allNodes)
+        print(i, "/", length(allNodes), "\r")
+        union!(seenNodes, getConnectingNodes(n.graph, cartimes, origin, allNodes))
+        union!(seenNodes, getConnectingNodes(walkgraph, cartimes, origin, allNodes))
+    end
+    return seenNodes
+end
+
+"""
+    Take an origin node and a graph, with a set of destination nodes, and return all the
+    nodes needed to take a shortest path.
+"""
+function getConnectingNodes(graph, times, origin, dests)
+    dijkstraResult = dijkstra_shortest_paths(graph, origin, times)
+    paths  = enumerate_paths(dijkstraResult, dests)
+    nodes = Set{Int}()
+    for p in paths
+        union!(nodes, p)
+    end
+    return nodes
 end
