@@ -104,7 +104,7 @@ function visualize(v::NetworkVisualizer)
     viewHeigth = max(maxY-minY, (maxX-minX)*window_h/window_w)
     view = View(Vector2f((minX+maxX)/2,(minY+maxY)/2), Vector2f(viewWidth, viewHeigth))
     zoomLevel = 1.0
-    hideNodes = false
+    hideNodes = true
     # init visualizer
     visualInit(v)
     redraw!(v)
