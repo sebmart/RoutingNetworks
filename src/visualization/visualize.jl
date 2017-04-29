@@ -9,6 +9,7 @@
     - attribute `network::Network`
     has to implement, automatically initialized
     - attribute `window::RenderWindow`
+    - attribute `view::View`
     - attribute `nodes::Vector{CircleShape}`
     - attribute `roads::Dict{Tuple{Int,Int},Line}`
     - attribute `nodeRadius::Float64` (to scale things)
@@ -102,7 +103,7 @@ function visualize(v::NetworkVisualizer)
     networkLength = max(maxX-minX, maxY-minY)
     viewWidth = max(maxX-minX, (maxY-minY)*window_w/window_h)
     viewHeigth = max(maxY-minY, (maxX-minX)*window_h/window_w)
-    view = View(Vector2f((minX+maxX)/2,(minY+maxY)/2), Vector2f(viewWidth, viewHeigth))
+    v.view = View(Vector2f((minX+maxX)/2,(minY+maxY)/2), Vector2f(viewWidth, viewHeigth))
     zoomLevel = 1.0
     hideNodes = true
     # init visualizer
@@ -121,8 +122,8 @@ function visualize(v::NetworkVisualizer)
                 window_w, window_h = size.width, size.height
                 viewWidth = max(maxX-minX, (maxY-minY)*window_w/window_h)
                 viewHeigth = max(maxY-minY, (maxX-minX)*window_h/window_w)
-                set_size(view, Vector2f(viewWidth, viewHeigth))
-                zoom(view, zoomLevel)
+                set_size(v.view, Vector2f(viewWidth, viewHeigth))
+                zoom(v.view, zoomLevel)
             end
             if get_type(event) == EventType.KEY_PRESSED
                 k = get_key(event).key_code
@@ -142,27 +143,27 @@ function visualize(v::NetworkVisualizer)
             visualEvent(v,event)
         end
 		if is_key_pressed(KeyCode.LEFT)
-			move(view, Vector2f(-networkLength/2*frameTime*zoomLevel,0.))
+			move(v.view, Vector2f(-networkLength/2*frameTime*zoomLevel,0.))
 		end
         if is_key_pressed(KeyCode.RIGHT)
-			move(view, Vector2f(networkLength/2*frameTime*zoomLevel,0.))
+			move(v.view, Vector2f(networkLength/2*frameTime*zoomLevel,0.))
 		end
         if is_key_pressed(KeyCode.UP)
-			move(view, Vector2f(0.,-networkLength/2*frameTime*zoomLevel))
+			move(v.view, Vector2f(0.,-networkLength/2*frameTime*zoomLevel))
 		end
         if is_key_pressed(KeyCode.DOWN)
-			move(view, Vector2f(0.,networkLength/2*frameTime*zoomLevel))
+			move(v.view, Vector2f(0.,networkLength/2*frameTime*zoomLevel))
 		end
         if is_key_pressed(KeyCode.Z)
-            zoom(view, 0.6^frameTime)
-            zoomLevel = get_size(view).x/viewWidth
+            zoom(v.view, 0.6^frameTime)
+            zoomLevel = get_size(v.view).x/viewWidth
 		end
 		if is_key_pressed(KeyCode.X)
-			zoom(view, 1/(0.6^frameTime))
-            zoomLevel = get_size(view).x/viewWidth
+			zoom(v.view, 1/(0.6^frameTime))
+            zoomLevel = get_size(v.view).x/viewWidth
 		end
-        set_view(v.window,view)
-        clear(v.window, SFML.white)
+        set_view(v.window,v.view)
+        clear(v.window, SFML.Color(200,200,200))
         # additional updates
         visualStartUpdate(v, frameTime)
         for road in values(v.roads)
