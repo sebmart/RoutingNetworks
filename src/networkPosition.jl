@@ -136,7 +136,10 @@ immutable RoadProjector
     maxDistance::Float64
 end
 
-function RoadProjector(n::Network; maxDistance::Float64=50.)
+function RoadProjector(n::Network; maxDistance::Float64=50., noHighway::Bool=false)
+    if noHighway # remove highways from network
+        n = roadTypeSubset(n, 3:6)
+    end
     # Creating the subnodes.
     subnodes = RoadSubNode[]
     uniqueArcs = Set{Tuple{Int, Int}}()
