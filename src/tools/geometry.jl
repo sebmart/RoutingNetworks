@@ -18,6 +18,16 @@ function boundingBox{T<:AbstractFloat}(poly::Vector{Tuple{T,T}})
 end
 
 """
+    Scales a given box (i.e. 5% bigger if scale=1.05)
+"""
+function scaleBox(box, scale)
+    minX, maxX, minY, maxY = box
+    lenX = maxX - minX; midX = (minX + maxX)/2
+    lenY = maxY - minY; midY = (minY + maxY)/2
+    return (midX - lenX*scale/2, midX + lenX*scale/2, midY-lenY*scale/2, midY+lenY*scale/2)
+end
+
+"""
     Distance between the two points in meters (true geodesic distance from LLA coordinates)
 """
 distanceGeo(pt1::Node, pt2::Node) = distanceGeo(pt1.lon, pt1.lat, pt2.lon, pt2.lat)

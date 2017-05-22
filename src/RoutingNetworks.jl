@@ -30,7 +30,7 @@ export VizColors, RoutingColors, RoadTypeColors, FadedColors, SpeedColors, Relat
 export NetworkProjector, NetworkPosition, NodeProjector, NodePosition, RoadProjector, RoadPosition
 export x, y, lat, lon, node, distToProj
 #tools
-export boundingBox, distanceGeo, distanceCoord, pointInsidePolygon, toENU, nRoads, nNodes
+export boundingBox, scaleBox, distanceGeo, distanceCoord, pointInsidePolygon, toENU, nRoads, nNodes
 
 include("network.jl")
 
