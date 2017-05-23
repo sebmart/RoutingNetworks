@@ -163,7 +163,7 @@ function visualize(v::NetworkVisualizer)
             zoomLevel = get_size(v.view).x/viewWidth
 		end
         set_view(v.window,v.view)
-        clear(v.window, SFML.Color(200,200,200))
+        clear(v.window, SFML.Color(210,210,210))
         # additional updates
         visualStartUpdate(v, frameTime)
         for road in values(v.roads)
