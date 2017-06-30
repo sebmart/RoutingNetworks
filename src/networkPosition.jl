@@ -159,7 +159,7 @@ function RoadProjector(n::Network; maxDistance::Float64=50., noHighway::Bool=fal
         end
     end
     # Constructing tree
-    nodePos = Array(Float64,(2,length(subnodes)))
+    nodePos = Array{Float64}(2,length(subnodes))
     for (i,subnode) in enumerate(subnodes)
        nodePos[1,i] = subnode.x
        nodePos[2,i] = subnode.y
