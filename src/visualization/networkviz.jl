@@ -6,7 +6,7 @@
 """
     `NetworkViz`: Basic NetworkVisualizer. Shows node information in title bar after click
 """
-type NetworkViz <: NetworkVisualizer
+mutable struct NetworkViz <: NetworkVisualizer
     # Mandatory attributes
     network::Network
     window::RenderWindow

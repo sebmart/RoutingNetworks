@@ -9,7 +9,7 @@
     The shortest path will be shown, starting from the selected node. click to fix the path.
 
 """
-type RoutingViz <: NetworkVisualizer
+mutable struct RoutingViz <: NetworkVisualizer
     # Mandatory attributes
     network::Network
     window::RenderWindow

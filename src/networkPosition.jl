@@ -7,7 +7,7 @@
 """
     Types that represent positions in the network, always contain.
 """
-abstract NetworkPosition
+abstract type NetworkPosition end
 
 " Returns the exact latitude of the position"
 lat(pos::NetworkPosition) = pos.lat
@@ -29,7 +29,7 @@ distanceGeo(p1::NetworkPosition, p2::NetworkPosition) =
 """
     A simple nearest-node projection to the network. Fast to compute.
 """
-immutable NodePosition <: NetworkPosition
+struct NodePosition <: NetworkPosition
     "Latitude"
     lat::Float64
     "Longitude"
@@ -52,7 +52,7 @@ end
 """
     KD-tree wrapper to project real locations onto network, (on nearest nodes only)
 """
-immutable NodeProjector
+struct NodeProjector
     "The routing network"
     network::Network
     "The KD-tree of nodes"
@@ -84,7 +84,7 @@ end
 """
     A more advanced projection to the network. project on a road and give position on this road.
 """
-immutable RoadPosition <: NetworkPosition
+struct RoadPosition <: NetworkPosition
     "Latitude"
     lat::Float64
     "Longitude"
@@ -111,7 +111,7 @@ end
 """
     Each road is discretized into regularly spaced sub-nodes, used by the RoadProjector
 """
-immutable RoadSubNode
+struct RoadSubNode
     "Origin node id"
     nodeO::Int
     "Destination node id"
@@ -125,7 +125,7 @@ end
 """
     More fancy projector, that project onto the exact nearest road.
 """
-immutable RoadProjector
+struct RoadProjector
     "The routing network"
     network::Network
     "The KD-tree for all RoadSubNodes"

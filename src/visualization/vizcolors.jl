@@ -7,7 +7,7 @@
     `VizColors` : abstract type that represents the visualization's colors:
     two methods use it: `nodeColor` and `roadColor`, that are made to be overriden
 """
-abstract VizColors
+abstract type VizColors end
 
 """
     `nodeColor` returns a node's color.
@@ -29,7 +29,7 @@ end
 """
     `RoadTypeColors` is a road-type based coloring scheme
 """
-type RoadTypeColors <: VizColors
+mutable struct RoadTypeColors <: VizColors
     typecolors::Vector{SFML.Color}
 end
 
@@ -43,7 +43,7 @@ roadColor(colors::RoadTypeColors, road::Road) = colors.typecolors[road.roadType]
 """
     `FadedColors` is just road-type with custom transparency
 """
-type FadedColors <: VizColors
+mutable struct FadedColors <: VizColors
     typecolors::Vector{SFML.Color}
     transp::Int
 end
@@ -63,12 +63,12 @@ roadColor(colors::FadedColors, road::Road) = colors.typecolors[road.roadType]
     `RoutingColors` colors that use road speed information.
     Must have a `roadtimes` attribute.
 """
-abstract RoutingColors <: VizColors
+abstract type RoutingColors <: VizColors end
 
 """
     `SpeedColors` colors road given their speed. Good for black and white printing
 """
-type SpeedColors <: RoutingColors
+mutable struct SpeedColors <: RoutingColors
     "Time of each road"
     roadtimes::AbstractArray{Float64,2}
     "speed corresponding to darkest color"
@@ -115,7 +115,7 @@ end
 """
     `RelativeSpeedColors` colors road given set of reference times.
 """
-type RelativeSpeedColors <: RoutingColors
+mutable struct RelativeSpeedColors <: RoutingColors
     "Time of each road"
     roadtimes::AbstractArray{Float64,2}
     "reference time of each road"

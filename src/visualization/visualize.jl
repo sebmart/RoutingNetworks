@@ -21,7 +21,7 @@
     - method `visualUpdate` => called each frame, to update and draw objects
     - method `visualRedraw` => called when redrawing
 """
-abstract NetworkVisualizer
+abstract type NetworkVisualizer end
 
 """
     `visualInit` initialize things

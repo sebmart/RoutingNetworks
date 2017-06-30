@@ -7,7 +7,7 @@
 `Node`, represents one network node. `x` and `y` are projections of `lon` and `lat`
 - `lon` and `lat` do not have to be defined
 """
-immutable Node
+struct Node
     x::Float64
     y::Float64
     lon::Float32
@@ -18,7 +18,7 @@ Node(x::Float64,y::Float64) = Node(x,y,0.,0.)
 """
 `Road`, represents a road in the network. roadType from 1 to 8
 """
-immutable Road
+struct Road
     orig::Int
     dest::Int
     # Distance in meters
@@ -29,7 +29,7 @@ end
 """
 `Network`, represents a routing network
 """
-type Network
+mutable struct Network
     "Graph of network"
     graph::DiGraph
     "Nodes information"

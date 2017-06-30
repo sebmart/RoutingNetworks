@@ -5,7 +5,7 @@
 
 ### Ellipsoid
 # Specify datum for translation between LLA and other coordinate systems
-immutable Ellipsoid
+struct Ellipsoid
     a::Float64        # Semi-major axis
     b::Float64        # Semi-minor axis
     e²::Float64       # Eccentricity squared
@@ -42,7 +42,7 @@ const WGS84  = Ellipsoid(a = "6378137.0", f_inv = "298.257223563")
 
 ### Point in Latitude-Longitude-Altitude (LLA) coordinates
 # Used to store node data in OpenStreetMap XML files
-immutable LLA
+struct LLA
     lat::Float64
     lon::Float64
     alt::Float64
@@ -51,7 +51,7 @@ LLA(lat, lon) = LLA(lat, lon, 0.0)
 
 ### Point in Earth-Centered-Earth-Fixed (ECEF) coordinates
 # Global cartesian coordinate system rotating with the Earth
-immutable ECEF
+struct ECEF
     x::Float64
     y::Float64
     z::Float64
@@ -60,7 +60,7 @@ end
 ### Point in East-North-Up (ENU) coordinates
 # Local cartesian coordinate system
 # Linearized about a reference point
-immutable ENU
+struct ENU
     east::Float64
     north::Float64
     up::Float64

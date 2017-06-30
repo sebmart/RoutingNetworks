@@ -7,7 +7,7 @@
     - for now, just compute the shortest paths
     - if no_sp = true, returns an incomplete object (in case want to run shortest paths later)
 """
-type RoutingPaths
+mutable struct RoutingPaths
     # Required attributes
     "A reference to the network"
     network::Network

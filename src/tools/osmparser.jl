@@ -2,7 +2,7 @@
 ## osmparser.jl
 ## copy of OpenStreetMapParser code
 ###################################################
-abstract OSMElement
+abstract type OSMElement end
 
 # OSMNodes
 # +-----+-------------------+---------------+
@@ -14,7 +14,7 @@ abstract OSMElement
 # | .   | .                 | .             |
 # +-----+-------------------+---------------+
 
-type OSMNode <: OSMElement
+mutable struct OSMNode <: OSMElement
     id::Int
     lonlat::Tuple{Float64,Float64}
     tags::Dict{String,String}
@@ -39,7 +39,7 @@ end
 # | .   | .                 | .             |
 # +-----+-------------------+---------------+
 
-type OSMWay <: OSMElement
+mutable struct OSMWay <: OSMElement
     id::Int
     nodes::Vector{Int}
     tags::Dict{String,String}
@@ -59,7 +59,7 @@ tags(w::OSMWay) = w.tags
 # | .   | .                     | .             |
 # +-----+-----------------------+---------------+
 
-type Relation <: OSMElement
+mutable struct Relation <: OSMElement
     id::Int
     members::Vector{Dict{String,String}}
     tags::Dict{String,String}
@@ -71,7 +71,7 @@ tags(r::Relation) = r.tags
 # Relation(id::Int) = Relation(id, Vector{Dict{String,String}}(),
 #                              Dict{String,String}())
 
-type OSMData
+mutable struct OSMData
     nodes::Vector{OSMNode}
     ways::Vector{OSMWay}
     relations::Vector{Relation}
@@ -82,7 +82,7 @@ end
 OSMData() = OSMData(Vector{OSMNode}(), Vector{OSMWay}(), Vector{Relation}(),
                     Set{String}(), Set{String}(), Set{String}())
 
-type DataHandle
+mutable struct DataHandle
     element::Symbol
     osm::OSMData
     node::OSMNode # initially undefined
@@ -192,7 +192,7 @@ end
 #     <tag k="oneway" v="yes"/>
 #   </way>
 
-type OSMWayHandle
+mutable struct OSMWayHandle
     element::Symbol
     ways::Vector{OSMWay}
     curr::OSMWay # initially undefined
@@ -242,7 +242,7 @@ end
 #   <member type="way" id="20" role="outer" />
 # </relation>
 
-type RelationHandle
+mutable struct RelationHandle
     element::Symbol
     relations::Vector{Relation}
     curr::Relation # initially undefined
