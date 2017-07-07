@@ -147,7 +147,7 @@ function RoadProjector(n::Network; maxDistance::Float64=50., noHighway::Bool=fal
         od = minmax(r.orig, r.dest)
         if !(od in uniqueArcs)
             push!(uniqueArcs, od)
-            nSubNodes = ceil(Int, r.distance/maxDistance)+1
+            nSubNodes = max(1,ceil(Int, r.distance/maxDistance))+1
             nodeO = n.nodes[r.orig]
             nodeD = n.nodes[r.dest]
             for i = 1:nSubNodes
@@ -176,7 +176,8 @@ function NetworkPosition(proj::RoadProjector, lat, lon)
     id, dist = knn(proj.tree,[x,y],1)
     closestSubNode = proj.subnodes[id[1]]
 
-    candidateSubNodes = inrange(proj.tree, [closestSubNode.x, closestSubNode.y], dist[1] + proj.maxDistance)
+    candidateSubNodes = inrange(proj.tree, [x, y], dist[1] + proj.maxDistance)
+
     candidateRoads = Tuple{Int, Int}[] # using a vector as very small sets are inefficient
     for subNodeId in candidateSubNodes
         subnode = proj.subnodes[subNodeId]
