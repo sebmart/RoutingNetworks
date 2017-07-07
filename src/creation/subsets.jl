@@ -163,7 +163,7 @@ end
 function connectingNodes(n::Network, positions::Vector{RoadPosition})
     cartimes = maxSpeedTimes(n)
     dists = roadDistances(n)
-    walktimes = max(dists, dists')
+    walktimes = max.(dists, dists')
     walkgraph = Graph(n.graph)
     allNodes = Set{Int}()
     for p in positions
