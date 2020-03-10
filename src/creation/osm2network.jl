@@ -40,7 +40,7 @@ function oneway(w::OSMWay)
             junction == "roundabout")
 end
 
-visible{T <: OSMElement}(obj::T) = (get(obj.tags, "visible", "") != "false")
+visible(obj::T) where T <: OSMElement = (get(obj.tags, "visible", "") != "false") 
 services(w::OSMWay) = (get(w.tags,"highway", "") == "services")
 reverse(w::OSMWay) = (get(w.tags,"oneway", "") == "-1")
 toradians(degree::AbstractFloat) = degree * π / 180.0
@@ -67,7 +67,7 @@ function osm2network(filename::AbstractString)
   lonlat = Tuple{Float64,Float64}[c.lonlat for c in osm.nodes]
   bounds = boundingBox(lonlat)
   center = ((bounds[2]+bounds[1])/2, (bounds[4]+bounds[3])/2)
-  nodes = Array{Node}(length(lonlat))
+  nodes = Array{Node}(undef, length(lonlat))
   for (i,(lon,lat)) in enumerate(lonlat)
       x,y = toENU(lon,lat,center)
       nodes[i] = Node(x,y,lon,lat)

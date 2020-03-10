@@ -47,7 +47,7 @@ function parallelShortestPaths!(r::RoutingPaths; batch_number::Int=0)
     pathTimes = SharedArray(Float64, (nv(g), nv(g)))
     parents  = SharedArray(Int,(nv(g),nv(g)))
 
-    @sync @parallel for orig in 1:nv(g)
+    @sync @distributed for orig in 1:nv(g)
         d = dijkstra_shortest_paths(g, orig, r.times)
         pathTimes[orig,:] = d.dists
         parents[orig,:] = d.parents

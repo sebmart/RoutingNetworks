@@ -2,7 +2,8 @@ __precompile__(false)
 
 module RoutingNetworks
 
-using LightGraphs, SFML, NearestNeighbors, Colors
+using LightGraphs, NearestNeighbors, Colors
+using Distributed, SparseArrays
 import JLD, LibExpat
 
 #main
@@ -51,11 +52,6 @@ include("routing/routingpaths.jl")
 include("routing/shortestpaths.jl")
 include("routing/tools.jl")
 include("routing/virtualtimes.jl")
-
-include("visualization/vizcolors.jl")
-include("visualization/visualize.jl")
-include("visualization/networkviz.jl")
-include("visualization/routingviz.jl")
 
 
 end

@@ -188,7 +188,7 @@ function NetworkPosition(proj::RoadProjector, lat, lon)
     end
     length(candidateRoads) > 0 || error("Something is wrong here.")
     bestOD = (0, 0)
-    bestFrac = -1.
+    bestFrac = -1.0
     bestDist = Inf
     otherSide = false
     for od in candidateRoads
@@ -202,7 +202,7 @@ function NetworkPosition(proj::RoadProjector, lat, lon)
     end
     (o,d) = bestOD
     if otherSide && haskey(proj.network.roads, (d,o)) # Select the road direction
-        bestFrac = 1.-bestFrac
+        bestFrac = 1.0 - bestFrac
         (o,d) = (d,o)
     end
 
@@ -231,7 +231,7 @@ function roadProjection(nO::Node, nD::Node, x::Float64, y::Float64)
     if (frac < 0.0)
         frac = 0.
     elseif (frac > 1.0)
-        frac = 1.
+        frac = 1.0
     end
 
     proj = O + frac * OD

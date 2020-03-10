@@ -8,7 +8,7 @@ subset the network: only keep the given nodes
 function subsetNetwork(n::Network, keepN::Vector{Int})
     nodesIndices = Dict{Int,Int}()
     roads = Dict{Tuple{Int,Int},Road}()
-    nodes = Array{Node}(length(keepN))
+    nodes = Array{Node}(undef, length(keepN))
 
     for (k,i) in enumerate(keepN)
         nodes[k] = n.nodes[i]
@@ -37,8 +37,7 @@ function removeNodes(n::Network, rem::Vector{Int})
         keep[i] = false
     end
     keepN = collect(1:length(n.nodes))[keep]
-    Tuple{Float64,Float64}[(n.x,n.y) for n in n.nodes]
-    return subsetNetwork(n,keepN)
+    return subsetNetwork(n, keepN)
 end
 
 
@@ -69,7 +68,7 @@ end
 """
 Returns nodes that are inside a Polygon
 """
-function inPolygon{T<:AbstractFloat}(n::Network, poly::Vector{Tuple{T,T}})
+function inPolygon(n::Network, poly::Vector{Tuple{T,T}}) where T<:AbstractFloat
     inPoly = Int[]
     for i in vertices(n.graph)
         if pointInsidePolygon(n.nodes[i].lon, n.nodes[i].lat, poly)
@@ -124,15 +123,15 @@ function intersections(n::Network)
     g2 = DiGraph(length(nodes))
     roads = Dict{Tuple{Int,Int},Road}()
     for i in vertices(g2)
-        for j in out_neighbors(g,index[i])
+        for j in outneighbors(g,index[i])
             dist = n.roads[index[i],j].distance
             roadType = n.roads[index[i],j].roadType
             k = j
             k2 = index[i]
             while revIndex[k] == 0
-                next = out_neighbors(g,k)[1]
+                next = outneighbors(g,k)[1]
                 if next == k2
-                    next = out_neighbors(g,k)[2]
+                    next = outneighbors(g,k)[2]
                 end
                 dist += n.roads[k,next].distance
                 roadType = max(roadType, n.roads[k,next].roadType)

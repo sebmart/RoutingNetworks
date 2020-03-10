@@ -99,7 +99,7 @@ function parseElement(handler::LibExpat.XPStreamHandler,
     if name == "node"
         data.element = :OSMNode
         data.node = OSMNode(parse(Int, attr["id"]),
-                         (float(attr["lon"]), float(attr["lat"])))
+                         (parse(Float64, attr["lon"]), parse(Float64, attr["lat"])))
     elseif name == "way"
         data.element = :OSMWay
         data.way = OSMWay(parse(Int, attr["id"]))
@@ -155,7 +155,7 @@ function parseOSMNode(handler::LibExpat.XPStreamHandler,
     if name == "node"
         data.element = :OSMNode
         data.curr = OSMNode(parse(Int, attr["id"]),
-                         (float(attr["lon"]), float(attr["lat"])),
+                         (parse(Float64, attr["lon"]), parse(Float64, attr["lat"])),
                          Dict{String,String}())
     elseif name == "tag" && data.element == :OSMNode
         data.curr.tags[attr["k"]] = attr["v"]
