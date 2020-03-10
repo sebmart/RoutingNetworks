@@ -6,9 +6,9 @@
     load a network previously saved as a template
 """
 function loadTemplate(name::AbstractString)
-    path = (@__DIR__) *  "/../../saved/$(name).jld2"
+    path = (@__DIR__) *  "/../../saved/$(name).jld"
     if isfile(path)
-    	JLD2.@load path n
+    	JLD.@load path n
     	return n
         # return JLD.load(path, "n")
     else
@@ -20,8 +20,8 @@ end
     Save a network as a template
 """
 function saveTemplate(n::Network, name::AbstractString)
-    path = (@__DIR__) *  "/../../saved/$(name).jld2"
-    JLD2.@save path n
+    path = (@__DIR__) *  "/../../saved/$(name).jld"
+    JLD.@save path n
     # JLD.save(path, "n", n)
 end
 
