@@ -39,6 +39,12 @@ git-tree-sha1 = "16d4acb3d37dc05b714977ffefa8890843dc8985"
 uuid = "d5fb7624-851a-54ee-a528-d3f3bac0b4a0"
 version = "0.2.3"
 
+[[CodecZlib]]
+deps = ["BinaryProvider", "Libdl", "TranscodingStreams"]
+git-tree-sha1 = "05916673a2627dd91b4969ff8ba6941bc85a960e"
+uuid = "944b1d66-785c-5afd-91f1-9de20f533193"
+version = "0.6.0"
+
 [[ColorTypes]]
 deps = ["FixedPointNumbers", "Random"]
 git-tree-sha1 = "b9de8dc6106e09c79f3f776c27c62360d30e5eb8"
@@ -113,6 +119,12 @@ deps = ["Compat", "FileIO", "HDF5", "LegacyStrings"]
 git-tree-sha1 = "c8c7a9ca4c17a519961a8ec27e508b07ffc9c1a9"
 uuid = "4138dd39-2aa7-5051-a626-17a0bb65d9c8"
 version = "0.9.2"
+
+[[JLD2]]
+deps = ["CodecZlib", "DataStructures", "FileIO", "Mmap", "Pkg", "Printf", "UUIDs"]
+git-tree-sha1 = "d6cfa7c24e27d7eaa2290372739c8298257dae16"
+uuid = "033835bb-8acc-5ee8-8aae-3f567f8a3819"
+version = "0.1.12"
 
 [[LegacyStrings]]
 deps = ["Compat"]
@@ -234,6 +246,12 @@ uuid = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 [[Test]]
 deps = ["Distributed", "InteractiveUtils", "Logging", "Random"]
 uuid = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[[TranscodingStreams]]
+deps = ["Random", "Test"]
+git-tree-sha1 = "7c53c35547de1c5b9d46a4797cf6d8253807108c"
+uuid = "3bb67fe8-82b1-5028-8e26-92a6c54297fa"
+version = "0.9.5"
 
 [[URIParser]]
 deps = ["Test", "Unicode"]

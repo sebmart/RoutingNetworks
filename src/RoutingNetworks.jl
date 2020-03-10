@@ -4,7 +4,7 @@ module RoutingNetworks
 
 using LightGraphs, NearestNeighbors, Colors
 using Distributed, SparseArrays
-import JLD, LibExpat
+import JLD, LibExpat, JLD2
 
 #main
 export Node, Road, Network

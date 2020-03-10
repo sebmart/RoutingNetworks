@@ -6,9 +6,11 @@
     load a network previously saved as a template
 """
 function loadTemplate(name::AbstractString)
-    path = "$(Pkg.dir("RoutingNetworks"))/saved/$(name).jld"
+    path = (@__DIR__) *  "/../../saved/$(name).jld2"
     if isfile(path)
-        return JLD.load(path, "n")
+    	JLD2.@load path n
+    	return n
+        # return JLD.load(path, "n")
     else
         error("template does not exist")
     end
@@ -18,8 +20,9 @@ end
     Save a network as a template
 """
 function saveTemplate(n::Network, name::AbstractString)
-    path = "$(Pkg.dir("RoutingNetworks"))/saved/$(name).jld"
-    JLD.save(path, "n", n)
+    path = (@__DIR__) *  "/../../saved/$(name).jld2"
+    JLD2.@save path n
+    # JLD.save(path, "n", n)
 end
 
 # """
