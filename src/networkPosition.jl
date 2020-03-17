@@ -137,7 +137,7 @@ struct RoadProjector
 end
 
 function RoadProjector(n::Network; maxDistance::Float64=50., noHighway::Bool=false)
-    if noHighway # remove highways from network
+    if noHighway # remove highways from network - does not remove nodes
         n = roadTypeSubset(n, 3:6)
     end
     # Creating the subnodes.
@@ -159,12 +159,12 @@ function RoadProjector(n::Network; maxDistance::Float64=50., noHighway::Bool=fal
         end
     end
     # Constructing tree
-    nodePos = Array{Float64}(2,length(subnodes))
+    nodePos = zeros(2,length(subnodes))
     for (i,subnode) in enumerate(subnodes)
        nodePos[1,i] = subnode.x
        nodePos[2,i] = subnode.y
     end
-    return RoadProjector(n,KDTree(nodePos), subnodes, maxDistance)
+    return RoadProjector(n, KDTree(nodePos), subnodes, maxDistance)
 end
 
 """

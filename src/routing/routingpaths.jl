@@ -55,7 +55,7 @@ RoutingPaths(n::Network) = RoutingPaths(n,roadDistances(n))
 
 function Base.show(io::IO, r::RoutingPaths)
     g = r.network.graph
-    println("Network routing times")
+    println(io, "Network routing times")
     if isdefined(r,:pathTimes)
         println(io, "with path and time for all $(nv(g)*(nv(g)-1)) possible trips")
     else
@@ -68,11 +68,10 @@ end
     Returns a RoutingTimes object where the "timings" are the distances
 """
 function roadDistances(n::Network)
-    dists = spzeros(length(n.nodes), length(n.nodes))
-    for ((i,j),r) in n.roads
-        dists[i,j] = r.distance
-    end
-    return dists
+	is = [r.orig for r in values(n.roads)]
+	js = [r.dest for r in values(n.roads)]
+	dists = [r.distance for r in values(n.roads)]
+	return sparse(is, js, dists)
 end
 
 """

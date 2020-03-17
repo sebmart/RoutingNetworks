@@ -123,7 +123,7 @@ end
     origins and destinations
 """
 function allPairTimes(n::Network, origins::Vector{Int}, dests::Vector{Int}, times::AbstractArray{Float64, 2})
-    result = Matrix{Float64}(length(origins), length(dests))
+    result = zeros(length(origins), length(dests))
     for (i,o) in enumerate(origins)
         d = dijkstra_shortest_paths(n.graph, o, times)
         result[i,:] = d.dists[dests]

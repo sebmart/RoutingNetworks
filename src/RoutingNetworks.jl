@@ -3,7 +3,7 @@ __precompile__(false)
 module RoutingNetworks
 
 using LightGraphs, NearestNeighbors, Colors
-using Distributed, SparseArrays
+using Distributed, SparseArrays, LinearAlgebra
 import JLD, LibExpat
 
 #main

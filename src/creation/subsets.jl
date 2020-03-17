@@ -159,7 +159,8 @@ end
     Take a list of RoadPosition, and returns the list of nodes that are needed to
     drive/walk from any position to any other position.
 """
-function connectingNodes(n::Network, positions::Vector{RoadPosition})
+function connectingNodes(n::Network, positions::Vector{RoadPosition};
+						 verbose::Bool = false)
     cartimes = maxSpeedTimes(n)
     dists = roadDistances(n)
     walktimes = max.(dists, dists')
@@ -172,11 +173,11 @@ function connectingNodes(n::Network, positions::Vector{RoadPosition})
     allNodes = sort(collect(allNodes))
 
     seenNodes = Set{Int}()
-    println(length(allNodes))
+    verbose && println("Computing shortest paths between $(length(allNodes)) nodes")
     for (i, origin) in enumerate(allNodes)
-        print(i, "/", length(allNodes), "\r")
+        verbose && print(i, "/", length(allNodes), "\r")
         union!(seenNodes, getConnectingNodes(n.graph, cartimes, origin, allNodes))
-        union!(seenNodes, getConnectingNodes(walkgraph, cartimes, origin, allNodes))
+        union!(seenNodes, getConnectingNodes(walkgraph, walktimes, origin, allNodes))
     end
     return seenNodes
 end

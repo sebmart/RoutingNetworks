@@ -22,10 +22,10 @@ uuid = "b99e7846-7c00-51b0-8f62-c81ae34c0232"
 version = "0.5.8"
 
 [[Blosc]]
-deps = ["BinaryProvider", "CMakeWrapper", "Compat", "Libdl"]
-git-tree-sha1 = "71fb23581e1f0b0ae7be8ccf0ebfb3600e23ca41"
+deps = ["BinaryProvider", "CMakeWrapper", "Libdl"]
+git-tree-sha1 = "9981f1795919b8f770dc064fe733ba09c2e7c7a9"
 uuid = "a74b3585-a348-5f62-a45c-50e91977d574"
-version = "0.5.1"
+version = "0.6.0"
 
 [[CMake]]
 deps = ["BinDeps"]
@@ -89,9 +89,9 @@ uuid = "8ba89e20-285c-5b6f-9357-94700520ee1b"
 
 [[FileIO]]
 deps = ["Pkg"]
-git-tree-sha1 = "2c84c57aced468fa21763c66d3bef33adcd09ec7"
+git-tree-sha1 = "250ac7dfd54b5ce47372505b392756633d4e9732"
 uuid = "5789e2e9-d7fb-5bc7-8068-2c6fae9b9549"
-version = "1.2.2"
+version = "1.2.3"
 
 [[FixedPointNumbers]]
 git-tree-sha1 = "4aaea64dd0c30ad79037084f8ca2b94348e65eaa"
