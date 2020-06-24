@@ -21,7 +21,7 @@ function rectNetwork(width::Int = 5, height::Int = 10; distX::Float64=200., dist
         end
 
         #Create nodes
-        nodes = Array{Node}(width*height)
+        nodes = Array{Node}(undef, width*height)
         for i in 1:height, j in 1:width
             nodes[coordToLoc(i,j)] = Node((j-(width+1)/2)*distX, ((height+1)/2 - i)*distY)
         end

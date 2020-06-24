@@ -29,12 +29,10 @@ end
     speeds are kph
 """
 function fixedSpeedTimes(n::Network, speeds::Vector{Float64})
-    g = n.graph
-    times = spzeros(nv(g),nv(g))
-    for ((o,d),r) in n.roads
-        times[o,d] = 3.6*r.distance/speeds[r.roadType]
-    end
-    return times
+	is = [r.orig for r in values(n.roads)]
+	js = [r.dest for r in values(n.roads)]
+	times = [3.6*r.distance/speeds[r.roadType] for r in values(n.roads)]
+	return sparse(is, js, times)
 end
 
 """
@@ -64,7 +62,6 @@ end
     - returns road times corresponding to random speed (sparse array) between 0 and 130 km/h
 """
 function randomTimes(n::Network)
-    srand()
     g = n.graph
     times = spzeros(nv(g), nv(g))
     for ((o,d), r) in n.roads

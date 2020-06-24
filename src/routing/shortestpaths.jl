@@ -47,7 +47,7 @@ function parallelShortestPaths!(r::RoutingPaths; batch_number::Int=0)
     pathTimes = SharedArray(Float64, (nv(g), nv(g)))
     parents  = SharedArray(Int,(nv(g),nv(g)))
 
-    @sync @parallel for orig in 1:nv(g)
+    @sync @distributed for orig in 1:nv(g)
         d = dijkstra_shortest_paths(g, orig, r.times)
         pathTimes[orig,:] = d.dists
         parents[orig,:] = d.parents
@@ -123,7 +123,7 @@ end
     origins and destinations
 """
 function allPairTimes(n::Network, origins::Vector{Int}, dests::Vector{Int}, times::AbstractArray{Float64, 2})
-    result = Matrix{Float64}(length(origins), length(dests))
+    result = zeros(length(origins), length(dests))
     for (i,o) in enumerate(origins)
         d = dijkstra_shortest_paths(n.graph, o, times)
         result[i,:] = d.dists[dests]

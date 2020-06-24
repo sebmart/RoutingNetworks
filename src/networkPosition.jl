@@ -137,7 +137,7 @@ struct RoadProjector
 end
 
 function RoadProjector(n::Network; maxDistance::Float64=50., noHighway::Bool=false)
-    if noHighway # remove highways from network
+    if noHighway # remove highways from network - does not remove nodes
         n = roadTypeSubset(n, 3:6)
     end
     # Creating the subnodes.
@@ -159,12 +159,12 @@ function RoadProjector(n::Network; maxDistance::Float64=50., noHighway::Bool=fal
         end
     end
     # Constructing tree
-    nodePos = Array{Float64}(2,length(subnodes))
+    nodePos = zeros(2,length(subnodes))
     for (i,subnode) in enumerate(subnodes)
        nodePos[1,i] = subnode.x
        nodePos[2,i] = subnode.y
     end
-    return RoadProjector(n,KDTree(nodePos), subnodes, maxDistance)
+    return RoadProjector(n, KDTree(nodePos), subnodes, maxDistance)
 end
 
 """
@@ -188,7 +188,7 @@ function NetworkPosition(proj::RoadProjector, lat, lon)
     end
     length(candidateRoads) > 0 || error("Something is wrong here.")
     bestOD = (0, 0)
-    bestFrac = -1.
+    bestFrac = -1.0
     bestDist = Inf
     otherSide = false
     for od in candidateRoads
@@ -202,7 +202,7 @@ function NetworkPosition(proj::RoadProjector, lat, lon)
     end
     (o,d) = bestOD
     if otherSide && haskey(proj.network.roads, (d,o)) # Select the road direction
-        bestFrac = 1.-bestFrac
+        bestFrac = 1.0 - bestFrac
         (o,d) = (d,o)
     end
 
@@ -231,7 +231,7 @@ function roadProjection(nO::Node, nD::Node, x::Float64, y::Float64)
     if (frac < 0.0)
         frac = 0.
     elseif (frac > 1.0)
-        frac = 1.
+        frac = 1.0
     end
 
     proj = O + frac * OD
