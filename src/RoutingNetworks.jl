@@ -2,7 +2,7 @@ __precompile__(false)
 
 module RoutingNetworks
 
-using LightGraphs, SFML, NearestNeighbors, Colors
+using LightGraphs, CSFML, NearestNeighbors, Colors
 import JLD, LibExpat
 
 #main
