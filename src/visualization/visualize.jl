@@ -79,7 +79,7 @@ function visualize(v::NetworkVisualizer)
     v.nodeRadius = 10.
 
     #create nodes
-    v.nodes = CircleShape[CircleShape() for i in 1:length(v.network.nodes)]
+    v.nodes = CircleShape[sfCircleShape_create() for i in 1:length(v.network.nodes)]
 
     #create roads
     v.roads = Dict{Tuple{Int,Int},Line}()
@@ -199,9 +199,9 @@ function redraw!(v::NetworkVisualizer)
 
     #positions nodes
     for (i, no) in enumerate(v.nodes)
-        set_radius(no, v.nodeRadius)
-        set_position(no, positions[i] - Vector2f(v.nodeRadius,v.nodeRadius))
-        set_fillcolor(no, nodeColor(v.colors, v.network.nodes[i]))
+        sfCircleShape_setRadius(no, v.nodeRadius)
+        sfCircleShape_setPosition(no, positions[i] - Vector2f(v.nodeRadius,v.nodeRadius))
+        sfCircleShape_setFillColor(no, nodeColor(v.colors, v.network.nodes[i]))
     end
 
     #positions roads

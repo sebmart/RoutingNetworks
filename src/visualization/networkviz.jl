@@ -45,13 +45,13 @@ function visualEvent(v::NetworkViz, event::Event)
         coord = pixel2coords(v.window,Vector2i(x,y))
 
         id = knn(v.tree,[Float64(coord.x),-Float64(coord.y)],1)[1][1]
-        set_fillcolor(v.nodes[v.selectedNode], nodeColor(v.colors, v.network.nodes[v.selectedNode]))
-        set_fillcolor(v.nodes[id], SFML.red)
+        sfCircleShape_setFillColor(v.nodes[v.selectedNode], nodeColor(v.colors, v.network.nodes[v.selectedNode]))
+        sfCircleShape_setFillColor(v.nodes[id], SFML.red)
         v.selectedNode = id
         set_title(v.window, "Node : $id in: $(in_neighbors(v.network.graph,id)) out: $(out_neighbors(v.network.graph,id))")
     end
 end
 
 function visualRedraw(v::NetworkViz)
-    set_fillcolor(v.nodes[v.selectedNode], SFML.red)
+    sfCircleShape_setFillColor(v.nodes[v.selectedNode], SFML.red)
 end

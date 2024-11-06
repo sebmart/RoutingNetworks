@@ -62,9 +62,9 @@ function visualStartUpdate(v::RoutingViz,frameTime::Float64)
         if nodeId != v.destNode
             if v.destNode != v.networkviz.selectedNode
                 # normal color to previous node
-                set_fillcolor(v.nodes[v.destNode], nodeColor(v.colors, v.network.nodes[v.destNode]))
+                sfCircleShape_setFillColor(v.nodes[v.destNode], nodeColor(v.colors, v.network.nodes[v.destNode]))
                 # red for new node
-                set_fillcolor(v.nodes[nodeId], SFML.red)
+                sfCircleShape_setFillColor(v.nodes[nodeId], SFML.red)
             end
             v.destNode = nodeId
             set_title(v.window, string("Routing path: ", v.networkviz.selectedNode, " => ", v.destNode))
@@ -86,7 +86,7 @@ function visualRedraw(v::RoutingViz)
     if v.pathMode
         # redraw the path
         drawPath(v)
-        set_fillcolor(v.nodes[v.destNode], SFML.red)
+        sfCircleShape_setFillColor(v.nodes[v.destNode], SFML.red)
     end
 end
 
@@ -97,7 +97,7 @@ function visualEvent(v::RoutingViz, event::Event)
             v.pathMode = false
             set_title(v.window, "")
             # normal color to previous node
-            set_fillcolor(v.nodes[v.destNode], nodeColor(v.colors, v.network.nodes[v.destNode]))
+            sfCircleShape_setFillColor(v.nodes[v.destNode], nodeColor(v.colors, v.network.nodes[v.destNode]))
         else
             v.pathMode = true
             v.pathFrozen = false
