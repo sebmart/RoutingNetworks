@@ -103,7 +103,7 @@ function visualize(v::NetworkVisualizer)
     networkLength = max(maxX-minX, maxY-minY)
     viewWidth = max(maxX-minX, (maxY-minY)*window_w/window_h)
     viewHeigth = max(maxY-minY, (maxX-minX)*window_h/window_w)
-    v.view = View(Vector2f((minX+maxX)/2,(minY+maxY)/2), Vector2f(viewWidth, viewHeigth))
+    v.view = sfView_create(Vector2f((minX+maxX)/2,(minY+maxY)/2), Vector2f(viewWidth, viewHeigth))
     zoomLevel = 1.0
     hideNodes = true
     # init visualizer
@@ -122,8 +122,8 @@ function visualize(v::NetworkVisualizer)
                 window_w, window_h = size.width, size.height
                 viewWidth = max(maxX-minX, (maxY-minY)*window_w/window_h)
                 viewHeigth = max(maxY-minY, (maxX-minX)*window_h/window_w)
-                set_size(v.view, Vector2f(viewWidth, viewHeigth))
-                zoom(v.view, zoomLevel)
+                sfView_setSize(v.view, Vector2f(viewWidth, viewHeigth))
+                sfView_zoom(v.view, zoomLevel)
             end
             if get_type(event) == EventType.KEY_PRESSED
                 k = get_key(event).key_code
@@ -143,24 +143,24 @@ function visualize(v::NetworkVisualizer)
             visualEvent(v,event)
         end
 		if is_key_pressed(KeyCode.LEFT)
-			move(v.view, Vector2f(-networkLength/2*frameTime*zoomLevel,0.))
+			sfView_move(v.view, Vector2f(-networkLength/2*frameTime*zoomLevel,0.))
 		end
         if is_key_pressed(KeyCode.RIGHT)
-			move(v.view, Vector2f(networkLength/2*frameTime*zoomLevel,0.))
+			sfView_move(v.view, Vector2f(networkLength/2*frameTime*zoomLevel,0.))
 		end
         if is_key_pressed(KeyCode.UP)
-			move(v.view, Vector2f(0.,-networkLength/2*frameTime*zoomLevel))
+			sfView_move(v.view, Vector2f(0.,-networkLength/2*frameTime*zoomLevel))
 		end
         if is_key_pressed(KeyCode.DOWN)
-			move(v.view, Vector2f(0.,networkLength/2*frameTime*zoomLevel))
+			sfView_move(v.view, Vector2f(0.,networkLength/2*frameTime*zoomLevel))
 		end
         if is_key_pressed(KeyCode.Z)
-            zoom(v.view, 0.6^frameTime)
-            zoomLevel = get_size(v.view).x/viewWidth
+            sfView_zoom(v.view, 0.6^frameTime)
+            zoomLevel = sfView_getSize(v.view).x/viewWidth
 		end
 		if is_key_pressed(KeyCode.X)
-			zoom(v.view, 1/(0.6^frameTime))
-            zoomLevel = get_size(v.view).x/viewWidth
+			sfView_zoom(v.view, 1/(0.6^frameTime))
+            zoomLevel = sfView_getSize(v.view).x/viewWidth
 		end
         set_view(v.window,v.view)
         clear(v.window, SFML.Color(210,210,210))
