@@ -23,6 +23,31 @@
 """
 abstract type NetworkVisualizer end
 
+mutable struct Line
+    line::Type{Ptr{sfVertexArray}}
+    rect::Vector{sfVector2f}
+
+    function Line(src::sfVector2f, dst::sfVector2f, thickness::Float64 = 1.)
+        self = new()
+        self.line = sfVertexArray_create()
+        sfVertexArray_setPrimitiveType(self.line, sfTriangleStrip)
+        self.rect = [src, dst]
+        Line_setThickness(self, thickness)
+        return self
+    end
+
+    function Line_setThickness(line::Line, thickness::Float64)
+        (src, dst) = self.rect
+        src_h = sfVector2f(src.x, src.y - thickness)
+        src_l = sfVector2f(src.x, src.y + thickness)
+        dst_h = sfVector2f(dst.x, dst.y - thickness)
+        dst_l = sfVector2f(dst.x, dst.y + thickness)
+        sfVertexArray_append(line, src_h)
+        sfVertexArray_append(line, dst_h)
+        sfVertexArray_append(line, dst_l)
+        sfVertexArray_append(line, src_l)
+    end
+end
 """
     `visualInit` initialize things
 """
@@ -84,7 +109,7 @@ function visualize(v::NetworkVisualizer)
     #create roads
     v.roads = Dict{Tuple{Int,Int},Line}()
     for ((o,d),r) in v.network.roads
-        road = Line(Vector2f(0.,0.),Vector2f(1000.,0.))
+        road = Line(sfVector2f(0.,0.),sfVector2f(1000.,0.))
         v.roads[o,d] = road
     end
 
@@ -103,7 +128,7 @@ function visualize(v::NetworkVisualizer)
     networkLength = max(maxX-minX, maxY-minY)
     viewWidth = max(maxX-minX, (maxY-minY)*window_w/window_h)
     viewHeigth = max(maxY-minY, (maxX-minX)*window_h/window_w)
-    v.view = View(Vector2f((minX+maxX)/2,(minY+maxY)/2), Vector2f(viewWidth, viewHeigth))
+    v.view = View(sfVector2f((minX+maxX)/2,(minY+maxY)/2), sfVector2f(viewWidth, viewHeigth))
     zoomLevel = 1.0
     hideNodes = true
     # init visualizer
@@ -122,7 +147,7 @@ function visualize(v::NetworkVisualizer)
                 window_w, window_h = size.width, size.height
                 viewWidth = max(maxX-minX, (maxY-minY)*window_w/window_h)
                 viewHeigth = max(maxY-minY, (maxX-minX)*window_h/window_w)
-                set_size(v.view, Vector2f(viewWidth, viewHeigth))
+                set_size(v.view, sfVector2f(viewWidth, viewHeigth))
                 zoom(v.view, zoomLevel)
             end
             if get_type(event) == EventType.KEY_PRESSED
@@ -143,16 +168,16 @@ function visualize(v::NetworkVisualizer)
             visualEvent(v,event)
         end
 		if is_key_pressed(KeyCode.LEFT)
-			move(v.view, Vector2f(-networkLength/2*frameTime*zoomLevel,0.))
+			move(v.view, sfVector2f(-networkLength/2*frameTime*zoomLevel,0.))
 		end
         if is_key_pressed(KeyCode.RIGHT)
-			move(v.view, Vector2f(networkLength/2*frameTime*zoomLevel,0.))
+			move(v.view, sfVector2f(networkLength/2*frameTime*zoomLevel,0.))
 		end
         if is_key_pressed(KeyCode.UP)
-			move(v.view, Vector2f(0.,-networkLength/2*frameTime*zoomLevel))
+			move(v.view, sfVector2f(0.,-networkLength/2*frameTime*zoomLevel))
 		end
         if is_key_pressed(KeyCode.DOWN)
-			move(v.view, Vector2f(0.,networkLength/2*frameTime*zoomLevel))
+			move(v.view, sfVector2f(0.,networkLength/2*frameTime*zoomLevel))
 		end
         if is_key_pressed(KeyCode.Z)
             zoom(v.view, 0.6^frameTime)
@@ -192,15 +217,15 @@ visualize(r::RoutingPaths) = visualize(RoutingViz(r))
 function redraw!(v::NetworkVisualizer)
     n = v.network
     # create position vectors (inverse y axe for plotting)
-    positions = Vector2f[Vector2f(node.x,-node.y) for node in n.nodes]
+    positions = sfVector2f[sfVector2f(node.x,-node.y) for node in n.nodes]
     for i in 1:length(positions)
-       positions[i] = Vector2f(n.nodes[i].x,-n.nodes[i].y)
+       positions[i] = sfVector2f(n.nodes[i].x,-n.nodes[i].y)
     end
 
     #positions nodes
     for (i, no) in enumerate(v.nodes)
         sfCircleShape_setRadius(no, v.nodeRadius)
-        sfCircleShape_setPosition(no, positions[i] - Vector2f(v.nodeRadius,v.nodeRadius))
+        sfCircleShape_setPosition(no, positions[i] - sfVector2f(v.nodeRadius,v.nodeRadius))
         sfCircleShape_setFillColor(no, nodeColor(v.colors, v.network.nodes[i]))
     end
 
@@ -210,7 +235,7 @@ function redraw!(v::NetworkVisualizer)
         x = positions[o].y - positions[d].y
         y = positions[d].x - positions[o].x
         l = sqrt(x^2+y^2); x = x/l; y = y/l
-        offset = Vector2f(x*v.nodeRadius*3./5.,y*v.nodeRadius*3./5.)
+        offset = sfVector2f(x*v.nodeRadius*3./5.,y*v.nodeRadius*3./5.)
         road = Line(positions[o]+offset,positions[d]+offset, 4*v.nodeRadius/5.)
         set_fillcolor(road,roadColor(v.colors, r))
         v.roads[o,d] = road
