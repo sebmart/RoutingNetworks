@@ -23,31 +23,43 @@
 """
 abstract type NetworkVisualizer end
 
+"""
+    Class Line for visualizing path
+"""
 mutable struct Line
-    line::Type{Ptr{sfVertexArray}}
+    # Graphical node
+    graph::Type{Ptr{sfVertexArray}}
+    # Line coords
     rect::Vector{sfVector2f}
+end
 
-    function Line(src::sfVector2f, dst::sfVector2f, thickness::Float64 = 1.)
-        self = new()
-        self.line = sfVertexArray_create()
-        sfVertexArray_setPrimitiveType(self.line, sfTriangleStrip)
-        self.rect = [src, dst]
-        Line_setThickness(self, thickness)
-        return self
-    end
+function Line(src::sfVector2f, dst::sfVector2f, thickness::Float64 = 1.)
+    self = new()
+    self.graph = sfVertexArray_create()
+    sfVertexArray_setPrimitiveType(self.graph, sfTriangleStrip)
+    self.rect = [src, dst]
+    Line_setThickness(self, thickness)
+    return self
+end
 
-    function Line_setThickness(line::Line, thickness::Float64)
-        (src, dst) = self.rect
-        src_h = sfVector2f(src.x, src.y - thickness)
-        src_l = sfVector2f(src.x, src.y + thickness)
-        dst_h = sfVector2f(dst.x, dst.y - thickness)
-        dst_l = sfVector2f(dst.x, dst.y + thickness)
-        sfVertexArray_append(line, src_h)
-        sfVertexArray_append(line, dst_h)
-        sfVertexArray_append(line, dst_l)
-        sfVertexArray_append(line, src_l)
+function Line_setThickness(line::Line, thickness::Float64)
+    (src, dst) = line.rect
+    src_h = sfVertex(sfVector2f(src.x, src.y - thickness), sfColor(255, 0, 0, 255), sfVector2f(0., 0.))
+    src_l = sfVertex(sfVector2f(src.x, src.y + thickness), sfColor(255, 0, 0, 255), sfVector2f(0., 0.))
+    dst_h = sfVertex(sfVector2f(dst.x, dst.y - thickness), sfColor(255, 0, 0, 255), sfVector2f(0., 0.))
+    dst_l = sfVertex(sfVector2f(dst.x, dst.y + thickness), sfColor(255, 0, 0, 255), sfVector2f(0., 0.))
+    sfVertexArray_append(line.graph, src_h)
+    sfVertexArray_append(line.graph, dst_h)
+    sfVertexArray_append(line.graph, dst_l)
+    sfVertexArray_append(line.graph, src_l)
+end
+
+function Line_setFillColor(line::Line, color::sfColor)
+    for i in range(0, 1, sfVertexArray_getVertexCount(line.graph))
+        sfVertexArray_getVertex(line.graph, i).color = color
     end
 end
+
 """
     `visualInit` initialize things
 """
@@ -235,7 +247,7 @@ function redraw!(v::NetworkVisualizer)
         x = positions[o].y - positions[d].y
         y = positions[d].x - positions[o].x
         l = sqrt(x^2+y^2); x = x/l; y = y/l
-        offset = sfVector2f(x*v.nodeRadius*3./5.,y*v.nodeRadius*3./5.)
+        offset = sfVector2f(x*v.nodeRadius*3. /5.,y*v.nodeRadius*3. /5.)
         road = Line(positions[o]+offset,positions[d]+offset, 4*v.nodeRadius/5.)
         set_fillcolor(road,roadColor(v.colors, r))
         v.roads[o,d] = road
