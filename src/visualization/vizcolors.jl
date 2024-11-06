@@ -12,12 +12,12 @@ abstract type VizColors end
 """
     `nodeColor` returns a node's color.
 """
-nodeColor(colors::VizColors, node::Node) = SFML.Color(0,0,0)
+nodeColor(colors::VizColors, node::Node) = SFML.sfColor_fromRGB(0,0,0)
 
 """
     `roadColor` returns a road's color
 """
-roadColor(colors::VizColors, road::Road) = SFML.Color(50,50,255)
+roadColor(colors::VizColors, road::Road) = SFML.sfColor_fromRGB(50,50,255)
 
 function Base.show(io::IO, viz::VizColors)
     typeName = split(string(typeof(viz)),".")[end]
@@ -30,13 +30,13 @@ end
     `RoadTypeColors` is a road-type based coloring scheme
 """
 mutable struct RoadTypeColors <: VizColors
-    typecolors::Vector{SFML.Color}
+    typecolors::Vector{SFML.sfColor_fromRGB}
 end
 
 RoadTypeColors() = RoadTypeColors(
-        [SFML.Color(0,255,0)  , SFML.Color(55,200,0), SFML.Color(105,150,0),
-         SFML.Color(150,105,0), SFML.Color(0,0,125) , SFML.Color(0,0,125)  ,
-         SFML.Color(0,0,125)  , SFML.Color(0,0,125)])
+        [SFML.sfColor_fromRGB(0,255,0)  , SFML.sfColor_fromRGB(55,200,0), SFML.sfColor_fromRGB(105,150,0),
+         SFML.sfColor_fromRGB(150,105,0), SFML.sfColor_fromRGB(0,0,125) , SFML.sfColor_fromRGB(0,0,125)  ,
+         SFML.sfColor_fromRGB(0,0,125)  , SFML.sfColor_fromRGB(0,0,125)])
 
 roadColor(colors::RoadTypeColors, road::Road) = colors.typecolors[road.roadType]
 
@@ -44,17 +44,17 @@ roadColor(colors::RoadTypeColors, road::Road) = colors.typecolors[road.roadType]
     `FadedColors` is just road-type with custom transparency
 """
 mutable struct FadedColors <: VizColors
-    typecolors::Vector{SFML.Color}
+    typecolors::Vector{SFML.sfColor_fromRGB}
     transp::Int
 end
-nodeColor(colors::FadedColors, node::Node) = SFML.Color(0,0,0, colors.transp)
+nodeColor(colors::FadedColors, node::Node) = SFML.sfColor_fromRGB(0,0,0, colors.transp)
 
 function FadedColors(transp)
     a = round(Int, transp*255)
     FadedColors(
-        [SFML.Color(0,255,0, a)  , SFML.Color(55,200,0, a), SFML.Color(105,150,0, a),
-         SFML.Color(150,105, a), SFML.Color(0,0,125, a) , SFML.Color(0,0,125, a)  ,
-         SFML.Color(0,0,125, a)  , SFML.Color(0,0,125, a)], a)
+        [SFML.sfColor_fromRGB(0,255,0, a)  , SFML.sfColor_fromRGB(55,200,0, a), SFML.sfColor_fromRGB(105,150,0, a),
+         SFML.sfColor_fromRGB(150,105, a), SFML.sfColor_fromRGB(0,0,125, a) , SFML.sfColor_fromRGB(0,0,125, a)  ,
+         SFML.sfColor_fromRGB(0,0,125, a)  , SFML.sfColor_fromRGB(0,0,125, a)], a)
 end
 roadColor(colors::FadedColors, road::Road) = colors.typecolors[road.roadType]
 
@@ -109,7 +109,7 @@ function roadColor(colors::SpeedColors, road::Road)
     c = round(Int,max(0, min(1, (s - colors.minSpeed)/(colors.maxSpeed-colors.minSpeed))) * (length(colors.palette)-1)) +1
 
     color = colors.palette[c]
-    return SFML.Color(round(Int,color.r*255),round(Int,255*color.g),round(Int,255*color.b))
+    return SFML.sfColor_fromRGB(round(Int,color.r*255),round(Int,255*color.g),round(Int,255*color.b))
 end
 
 """
@@ -174,5 +174,5 @@ function roadColor(colors::RelativeSpeedColors, road::Road)
 
     paletteBin = round(Int, 1 + (length(palette)-1) * (min(speedratio,colors.maxRatio) - 1) / (colors.maxRatio - 1))
     color = palette[paletteBin]
-    return SFML.Color(round(Int,color.r*255),round(Int,255*color.g),round(Int,255*color.b))
+    return SFML.sfColor_fromRGB(round(Int,color.r*255),round(Int,255*color.g),round(Int,255*color.b))
 end
