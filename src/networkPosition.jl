@@ -202,7 +202,7 @@ function NetworkPosition(proj::RoadProjector, lat, lon)
     end
     (o,d) = bestOD
     if otherSide && haskey(proj.network.roads, (d,o)) # Select the road direction
-        bestFrac = 1. - bestFrac
+        bestFrac = 1.-bestFrac
         (o,d) = (d,o)
     end
 

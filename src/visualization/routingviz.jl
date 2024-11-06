@@ -64,7 +64,7 @@ function visualStartUpdate(v::RoutingViz,frameTime::Float64)
                 # normal color to previous node
                 set_fillcolor(v.nodes[v.destNode], nodeColor(v.colors, v.network.nodes[v.destNode]))
                 # red for new node
-                set_fillcolor(v.nodes[nodeId], CSFML.red)
+                set_fillcolor(v.nodes[nodeId], SFML.red)
             end
             v.destNode = nodeId
             set_title(v.window, string("Routing path: ", v.networkviz.selectedNode, " => ", v.destNode))
@@ -86,7 +86,7 @@ function visualRedraw(v::RoutingViz)
     if v.pathMode
         # redraw the path
         drawPath(v)
-        set_fillcolor(v.nodes[v.destNode], CSFML.red)
+        set_fillcolor(v.nodes[v.destNode], SFML.red)
     end
 end
 
@@ -120,6 +120,6 @@ function drawPath(v::RoutingViz)
     v.path = [Line(copy(v.roads[o, d].rect)) for (o,d) in getPathEdges(v.routing, v.networkviz.selectedNode, v.destNode)]
     for line in v.path
         set_thickness(line, get_thickness(line)*4.)
-        set_fillcolor(line, CSFML.Color(0, 0, 125))
+        set_fillcolor(line, SFML.Color(0, 0, 125))
     end
 end

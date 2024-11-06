@@ -163,7 +163,7 @@ function visualize(v::NetworkVisualizer)
             zoomLevel = get_size(v.view).x/viewWidth
 		end
         set_view(v.window,v.view)
-        clear(v.window, CSFML.Color(210,210,210))
+        clear(v.window, SFML.Color(210,210,210))
         # additional updates
         visualStartUpdate(v, frameTime)
         for road in values(v.roads)
@@ -205,12 +205,12 @@ function redraw!(v::NetworkVisualizer)
     end
 
     #positions roads
-    #CSFML bug with lines! have to recreate them...
+    #SFML bug with lines! have to recreate them...
     for ((o,d),r) in v.network.roads
         x = positions[o].y - positions[d].y
         y = positions[d].x - positions[o].x
         l = sqrt(x^2+y^2); x = x/l; y = y/l
-        offset = Vector2f(x*v.nodeRadius*3.0/5.0,y*v.nodeRadius*3.0/5.)
+        offset = Vector2f(x*v.nodeRadius*3./5.,y*v.nodeRadius*3./5.)
         road = Line(positions[o]+offset,positions[d]+offset, 4*v.nodeRadius/5.)
         set_fillcolor(road,roadColor(v.colors, r))
         v.roads[o,d] = road
