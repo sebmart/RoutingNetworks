@@ -140,7 +140,7 @@ function visualize(v::NetworkVisualizer)
     networkLength = max(maxX-minX, maxY-minY)
     viewWidth = max(maxX-minX, (maxY-minY)*window_w/window_h)
     viewHeigth = max(maxY-minY, (maxX-minX)*window_h/window_w)
-    v.view = sfView_create(sfVector2f((minX+maxX)/2,(minY+maxY)/2), sfVector2f(viewWidth, viewHeigth))
+    v.view = sfView_createFromRect(sfFloatRect((minX+maxX)/2,(minY+maxY)/2, viewWidth, viewHeigth))
     zoomLevel = 1.0
     hideNodes = true
     # init visualizer
@@ -158,7 +158,7 @@ function visualize(v::NetworkVisualizer)
                 window_w, window_h = event.width, event.height
                 viewWidth = max(maxX-minX, (maxY-minY)*window_w/window_h)
                 viewHeigth = max(maxY-minY, (maxX-minX)*window_h/window_w)
-                sfView_setSize(v.view, Vector2f(viewWidth, viewHeigth))
+                sfView_setSize(v.view, sfVector2f(viewWidth, viewHeigth))
                 sfView_zoom(v.view, zoomLevel)
             end
             if get_type(event) == sfEventType.sfEvtKeyPressed
@@ -180,10 +180,10 @@ function visualize(v::NetworkVisualizer)
         end
 
 		if is_key_pressed(sfKeyCode.sfKeyLeft)
-			sfView_move(v.view, Vector2f(-networkLength/2*frameTime*zoomLevel,0.))
+			sfView_move(v.view, sfVector2f(-networkLength/2*frameTime*zoomLevel,0.))
 		end
         if is_key_pressed(sfKeyCode.sfKeyRight)
-			sfView_move(v.view, Vector2f(networkLength/2*frameTime*zoomLevel,0.))
+			sfView_move(v.view, sfVector2f(networkLength/2*frameTime*zoomLevel,0.))
 		end
         if is_key_pressed(sfKeyCode.sfKeyUp)
 			sfView_move(v.view, sfVector2f(0.,-networkLength/2*frameTime*zoomLevel))

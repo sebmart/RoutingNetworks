@@ -12,9 +12,9 @@
 mutable struct RoutingViz <: NetworkVisualizer
     # Mandatory attributes
     network::Network
-    window::RenderWindow
-    view::View
-    nodes::Vector{CircleShape}
+    window::sfRenderWindow
+    view::sfView
+    nodes::Vector{sfCircleShape}
     roads::Dict{Tuple{Int,Int},Line}
     nodeRadius::Float64
     colors::VizColors

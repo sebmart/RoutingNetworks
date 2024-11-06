@@ -10,7 +10,7 @@ mutable struct NetworkViz <: NetworkVisualizer
     # Mandatory attributes
     network::Network
     window::sfRenderWindow
-    view::View
+    view::sfView
     nodes::Vector{sfCircleShape}
     roads::Dict{Tuple{Int,Int},Line}
     nodeRadius::Float64
