@@ -1,6 +1,7 @@
 LightGraphs
-SFML
+CSFML
 JLD
 NearestNeighbors
 LibExpat
 Colors
+Distributed
