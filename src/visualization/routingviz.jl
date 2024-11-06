@@ -91,8 +91,8 @@ function visualRedraw(v::RoutingViz)
 end
 
 
-function visualEvent(v::RoutingViz, event::Event)
-    if get_type(event) == EventType.KEY_PRESSED && get_key(event).key_code == KeyCode.P
+function visualEvent(v::RoutingViz, event::sfEvent)
+    if event.type == sfEventType.sfEvtKeyPressed && event.code == sfKeyCode.sfKeyP
         if v.pathMode
             v.pathMode = false
             set_title(v.window, "")
@@ -105,7 +105,7 @@ function visualEvent(v::RoutingViz, event::Event)
             v.path = []
         end
     elseif v.pathMode
-        if get_type(event) == EventType.MOUSE_BUTTON_PRESSED && get_mousebutton(event).button == MouseButton.LEFT
+        if event.type == sfEventType.sfEvtMouseButtonPressed && event.button == sfMouseButton.sfMouseLeft
             v.pathFrozen = !v.pathFrozen
         end
     else

@@ -9,9 +9,9 @@
 mutable struct NetworkViz <: NetworkVisualizer
     # Mandatory attributes
     network::Network
-    window::RenderWindow
+    window::sfRenderWindow
     view::View
-    nodes::Vector{CircleShape}
+    nodes::Vector{sfCircleShape}
     roads::Dict{Tuple{Int,Int},Line}
     nodeRadius::Float64
     colors::VizColors
@@ -40,7 +40,7 @@ mutable struct NetworkViz <: NetworkVisualizer
 end
 
 function visualEvent(v::NetworkViz, event::sfEvent)
-    if get_type(event) == sfEventType.MOUSE_BUTTON_PRESSED && get_mousebutton(event).button == MouseButton.LEFT
+    if event.type == sfEventType.sfEvtMouseButtonPressed && event.button == sfMouseButton.sfMouseLeft
         x,y = get_mousebutton(event).x, get_mousebutton(event).y
         coord = pixel2coords(v.window,Vector2i(x,y))
 

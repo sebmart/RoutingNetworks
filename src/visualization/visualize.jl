@@ -69,7 +69,7 @@ end
 """
     `visualEvent` => called each frame, is given the events
 """
-function visualEvent(v::NetworkVisualizer, event::Event)
+function visualEvent(v::NetworkVisualizer, event::sfEvent)
 end
 
 """
@@ -151,51 +151,51 @@ function visualize(v::NetworkVisualizer)
     while isopen(v.window)
         frameTime = Float64(as_seconds(restart(clock)))
         while pollevent(v.window, event)
-            if get_type(event) == EventType.CLOSED
+            if get_type(event) == sfEventType.sfEvtClosed
                 close(v.window)
             end
-            if get_type(event) == EventType.RESIZED
-                size = get_size(event)
-                window_w, window_h = size.width, size.height
+            if get_type(event) == sfEventType.sfEvtResized
+                window_w, window_h = event.width, event.height
                 viewWidth = max(maxX-minX, (maxY-minY)*window_w/window_h)
                 viewHeigth = max(maxY-minY, (maxX-minX)*window_h/window_w)
                 sfView_setSize(v.view, Vector2f(viewWidth, viewHeigth))
                 sfView_zoom(v.view, zoomLevel)
             end
-            if get_type(event) == EventType.KEY_PRESSED
-                k = get_key(event).key_code
-                if k == KeyCode.ESCAPE || k == KeyCode.Q
+            if get_type(event) == sfEventType.sfEvtKeyPressed
+                k = event.code
+                if k == sfKeyCode.sfKeyEscape || k == sfKeyCode.sfKeyQ
                     close(v.window)
-                elseif k == KeyCode.A
+                elseif k == sfKeyCode.sfKeyA
                     v.nodeRadius *= 1.3
                     redraw!(v)
-                elseif k == KeyCode.S
+                elseif k == sfKeyCode.sfKeyS
                     v.nodeRadius /= 1.3
                     redraw!(v)
-                elseif k == KeyCode.D
+                elseif k == sfKeyCode.sfKeyD
                     hideNodes = !hideNodes
                 end
             end
             # additional event processing
             visualEvent(v,event)
         end
-		if is_key_pressed(KeyCode.LEFT)
+
+		if is_key_pressed(sfKeyCode.sfKeyLeft)
 			sfView_move(v.view, Vector2f(-networkLength/2*frameTime*zoomLevel,0.))
 		end
-        if is_key_pressed(KeyCode.RIGHT)
+        if is_key_pressed(sfKeyCode.sfKeyRight)
 			sfView_move(v.view, Vector2f(networkLength/2*frameTime*zoomLevel,0.))
 		end
-        if is_key_pressed(KeyCode.UP)
+        if is_key_pressed(sfKeyCode.sfKeyUp)
 			sfView_move(v.view, sfVector2f(0.,-networkLength/2*frameTime*zoomLevel))
 		end
-        if is_key_pressed(KeyCode.DOWN)
+        if is_key_pressed(sfKeyCode.sfKeyDown)
 			sfView_move(v.view, sfVector2f(0.,networkLength/2*frameTime*zoomLevel))
 		end
-        if is_key_pressed(KeyCode.Z)
+        if is_key_pressed(sfKeyCode.sfKeyZ)
             sfView_zoom(v.view, 0.6^frameTime)
             zoomLevel = sfView_getSize(v.view).x/viewWidth
 		end
-		if is_key_pressed(KeyCode.X)
+		if is_key_pressed(sfKeyCode.sfKeyX)
 			sfView_zoom(v.view, 1/(0.6^frameTime))
             zoomLevel = sfView_getSize(v.view).x/viewWidth
 		end
