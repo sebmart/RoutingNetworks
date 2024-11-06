@@ -7,7 +7,7 @@
     Create the road network inside the defined box.
     query the osm database using the overpass API if no osm file is given
 """
-function queryOsmBox{T<:AbstractFloat}(left::T, right::T, bottom::T, top::T; osmfile="")
+function queryOsmBox(left::T, right::T, bottom::T, top::T; osmfile="") where {T<:AbstractFloat}
     if isempty(osmfile)
         url = "http://overpass-api.de/api/map?bbox=$(left),$(bottom),$(right),$(top)"
         osmfile = "$(Pkg.dir("RoutingNetworks"))/.cache/data.osm"
@@ -28,7 +28,7 @@ end
     Query a polygon
     right now, query the whole bounding-box and subset the polygon: not optimal
 """
-function queryOsmPolygon{T<:AbstractFloat}(poly::Vector{Tuple{T,T}}; osmfile="")
+function queryOsmPolygon(poly::Vector{Tuple{T,T}}; osmfile="") where {T<:AbstractFloat}
     (minLon,maxLon,minLat,maxLat) = boundingBox(poly)
     n = queryOsmBox(minLon,maxLon,minLat,maxLat,osmfile=osmfile)
     n = subsetNetwork(n,inPolygon(n,poly))
