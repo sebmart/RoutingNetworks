@@ -128,7 +128,7 @@ function visualize(v::NetworkVisualizer)
     networkLength = max(maxX-minX, maxY-minY)
     viewWidth = max(maxX-minX, (maxY-minY)*window_w/window_h)
     viewHeigth = max(maxY-minY, (maxX-minX)*window_h/window_w)
-    v.view = sfView_create(Vector2f((minX+maxX)/2,(minY+maxY)/2), Vector2f(viewWidth, viewHeigth))
+    v.view = sfView_create(sfVector2f((minX+maxX)/2,(minY+maxY)/2), sfVector2f(viewWidth, viewHeigth))
     zoomLevel = 1.0
     hideNodes = true
     # init visualizer
@@ -188,7 +188,7 @@ function visualize(v::NetworkVisualizer)
             zoomLevel = sfView_getSize(v.view).x/viewWidth
 		end
         set_view(v.window,v.view)
-        clear(v.window, SFML.sfColor_fromRGB(210,210,210))
+        clear(v.window, sfColor_fromRGB(210,210,210))
         # additional updates
         visualStartUpdate(v, frameTime)
         for road in values(v.roads)

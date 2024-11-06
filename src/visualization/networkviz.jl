@@ -39,19 +39,19 @@ mutable struct NetworkViz <: NetworkVisualizer
     end
 end
 
-function visualEvent(v::NetworkViz, event::Event)
-    if get_type(event) == EventType.MOUSE_BUTTON_PRESSED && get_mousebutton(event).button == MouseButton.LEFT
+function visualEvent(v::NetworkViz, event::sfEvent)
+    if get_type(event) == sfEventType.MOUSE_BUTTON_PRESSED && get_mousebutton(event).button == MouseButton.LEFT
         x,y = get_mousebutton(event).x, get_mousebutton(event).y
         coord = pixel2coords(v.window,Vector2i(x,y))
 
         id = knn(v.tree,[Float64(coord.x),-Float64(coord.y)],1)[1][1]
         sfCircleShape_setFillColor(v.nodes[v.selectedNode], nodeColor(v.colors, v.network.nodes[v.selectedNode]))
-        sfCircleShape_setFillColor(v.nodes[id], SFML.sfRed)
+        sfCircleShape_setFillColor(v.nodes[id], sfColor_fromRGB(255, 0, 0))
         v.selectedNode = id
         set_title(v.window, "Node : $id in: $(in_neighbors(v.network.graph,id)) out: $(out_neighbors(v.network.graph,id))")
     end
 end
 
 function visualRedraw(v::NetworkViz)
-    sfCircleShape_setFillColor(v.nodes[v.selectedNode], SFML.sfRed)
+    sfCircleShape_setFillColor(v.nodes[v.selectedNode], sfColor_fromRGB(255, 0, 0))
 end
