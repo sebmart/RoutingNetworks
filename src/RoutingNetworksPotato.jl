@@ -1,6 +1,6 @@
 __precompile__(false)
 
-module RoutingNetworks
+module RoutingNetworksPotato
 
 using LightGraphs, CSFML, NearestNeighbors, Colors
 using CSFML.LibCSFML
