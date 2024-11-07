@@ -1,4 +1,4 @@
-__precompile__(false)
+# __precompile__(false)
 
 module RoutingNetworksPotato
 
@@ -59,5 +59,3 @@ include("visualization/networkviz.jl")
 include("visualization/routingviz.jl")
 
 end
-
-n = RoutingNetworksPotato.squareNetwork(3)
