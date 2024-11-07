@@ -60,4 +60,4 @@ include("visualization/routingviz.jl")
 
 end
 
-n = RoutingNetworks.squareNetwork(3)
+n = RoutingNetworksPotato.squareNetwork(3)
