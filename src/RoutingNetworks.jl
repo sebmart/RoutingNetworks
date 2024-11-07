@@ -58,5 +58,6 @@ include("visualization/visualize.jl")
 include("visualization/networkviz.jl")
 include("visualization/routingviz.jl")
 
-
 end
+
+n = RoutingNetworks.squareNetwork(3)
