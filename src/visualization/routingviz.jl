@@ -56,7 +56,8 @@ end
 
 function visualStartUpdate(v::RoutingViz,frameTime::Float64)
     if v.pathMode && !v.pathFrozen
-        mouseCoord = pixel2coords(v.window, get_mousepos(v.window))
+        x, y = sfEvent.sfMouseMoveEvent.x, sfEvent.sfMouseMoveEvent.y
+        mouseCoord = sfRenderWindow_mapPixelToCoords(v.window, Vector{sfVector2i}(x, y))
         nodeId = knn(v.networkviz.tree,[Float64(mouseCoord.x),-Float64(mouseCoord.y)],1)[1][1]
 
         if nodeId != v.destNode
@@ -67,7 +68,7 @@ function visualStartUpdate(v::RoutingViz,frameTime::Float64)
                 sfCircleShape_setFillColor(v.nodes[nodeId], sfColor_fromRGB(255, 0, 0))
             end
             v.destNode = nodeId
-            set_title(v.window, string("Routing path: ", v.networkviz.selectedNode, " => ", v.destNode))
+            sfRenderWindow_setTitle(v.window, string("Routing path: ", v.networkviz.selectedNode, " => ", v.destNode))
             drawPath(v)
         end
     end
@@ -95,7 +96,7 @@ function visualEvent(v::RoutingViz, event::sfEvent)
     if event.type == sfEventType.sfEvtKeyPressed && event.code == sfKeyCode.sfKeyP
         if v.pathMode
             v.pathMode = false
-            set_title(v.window, "")
+            sfRenderWindow_setTitle(v.window, "")
             # normal color to previous node
             sfCircleShape_setFillColor(v.nodes[v.destNode], nodeColor(v.colors, v.network.nodes[v.destNode]))
         else
@@ -119,7 +120,7 @@ end
 function drawPath(v::RoutingViz)
     v.path = [Line(copy(v.roads[o, d].rect)) for (o,d) in getPathEdges(v.routing, v.networkviz.selectedNode, v.destNode)]
     for line in v.path
-        set_thickness(line, get_thickness(line)*4.)
-        set_fillcolor(line, sfColor_fromRGB(0, 0, 125))
+        Line_setThickness(line, get_thickness(line)*4.)
+        Line_setFillColor(line, sfColor_fromRGB(0, 0, 125))
     end
 end

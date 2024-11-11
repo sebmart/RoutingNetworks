@@ -41,14 +41,14 @@ end
 
 function visualEvent(v::NetworkViz, event::sfEvent)
     if event.type == sfEventType.sfEvtMouseButtonPressed && event.button == sfMouseButton.sfMouseLeft
-        x,y = get_mousebutton(event).x, get_mousebutton(event).y
-        coord = pixel2coords(v.window,Vector2i(x,y))
+        x, y = event.sfMouseButtonEvent.x, event.sfMouseButtonEvent.y
+        coord = sfRenderWindow_mapPixelToCoords(v.window,Vector{sfVector2i}(x, y))
 
         id = knn(v.tree,[Float64(coord.x),-Float64(coord.y)],1)[1][1]
         sfCircleShape_setFillColor(v.nodes[v.selectedNode], nodeColor(v.colors, v.network.nodes[v.selectedNode]))
         sfCircleShape_setFillColor(v.nodes[id], sfColor_fromRGB(255, 0, 0))
         v.selectedNode = id
-        set_title(v.window, "Node : $id in: $(in_neighbors(v.network.graph,id)) out: $(out_neighbors(v.network.graph,id))")
+        sfRenderWindow_setTitle(v.window, "Node : $id in: $(in_neighbors(v.network.graph,id)) out: $(out_neighbors(v.network.graph,id))")
     end
 end
 

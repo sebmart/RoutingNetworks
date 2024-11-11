@@ -30,10 +30,10 @@ mutable struct Line
     # Graphical node
     graph::Type{Ptr{sfVertexArray}}
     # Line coords
-    rect::Vector{sfVector2f}
+    rect::Vector{Vector{sfVector2f}}
 end
 
-function Line(src::sfVector2f, dst::sfVector2f, thickness::Float64 = 1.)
+function Line(src::Vector{sfVector2f}, dst::Vector{sfVector2f}, thickness::Float64 = 1.)
     self = new()
     self.graph = sfVertexArray_create()
     sfVertexArray_setPrimitiveType(self.graph, sfTriangleStrip)
@@ -44,10 +44,10 @@ end
 
 function Line_setThickness(line::Line, thickness::Float64)
     (src, dst) = line.rect
-    src_h = sfVertex(sfVector2f(src.x, src.y - thickness), sfColor(255, 0, 0, 255), sfVector2f(0., 0.))
-    src_l = sfVertex(sfVector2f(src.x, src.y + thickness), sfColor(255, 0, 0, 255), sfVector2f(0., 0.))
-    dst_h = sfVertex(sfVector2f(dst.x, dst.y - thickness), sfColor(255, 0, 0, 255), sfVector2f(0., 0.))
-    dst_l = sfVertex(sfVector2f(dst.x, dst.y + thickness), sfColor(255, 0, 0, 255), sfVector2f(0., 0.))
+    src_h = sfVertex(Vector{sfVector2f}(src.x, src.y - thickness), sfColor(255, 0, 0, 255), Vector{sfVector2f}(0., 0.))
+    src_l = sfVertex(Vector{sfVector2f}(src.x, src.y + thickness), sfColor(255, 0, 0, 255), Vector{sfVector2f}(0., 0.))
+    dst_h = sfVertex(Vector{sfVector2f}(dst.x, dst.y - thickness), sfColor(255, 0, 0, 255), Vector{sfVector2f}(0., 0.))
+    dst_l = sfVertex(Vector{sfVector2f}(dst.x, dst.y + thickness), sfColor(255, 0, 0, 255), Vector{sfVector2f}(0., 0.))
     sfVertexArray_append(line.graph, src_h)
     sfVertexArray_append(line.graph, dst_h)
     sfVertexArray_append(line.graph, dst_l)
@@ -121,7 +121,7 @@ function visualize(v::NetworkVisualizer)
     #create roads
     v.roads = Dict{Tuple{Int,Int},Line}()
     for ((o,d),r) in v.network.roads
-        road = Line(sfVector2f(0.,0.),sfVector2f(1000.,0.))
+        road = Line(Vector{sfVector2f}(0.,0.),Vector{sfVector2f}(1000.,0.))
         v.roads[o,d] = road
     end
 
@@ -158,7 +158,7 @@ function visualize(v::NetworkVisualizer)
                 window_w, window_h = event.width, event.height
                 viewWidth = max(maxX-minX, (maxY-minY)*window_w/window_h)
                 viewHeigth = max(maxY-minY, (maxX-minX)*window_h/window_w)
-                sfView_setSize(v.view, sfVector2f(viewWidth, viewHeigth))
+                sfView_setSize(v.view, Vector{sfVector2f}(viewWidth, viewHeigth))
                 sfView_zoom(v.view, zoomLevel)
             end
             if get_type(event) == sfEventType.sfEvtKeyPressed
@@ -180,16 +180,16 @@ function visualize(v::NetworkVisualizer)
         end
 
 		if is_key_pressed(sfKeyCode.sfKeyLeft)
-			sfView_move(v.view, sfVector2f(-networkLength/2*frameTime*zoomLevel,0.))
+			sfView_move(v.view, Vector{sfVector2f}(-networkLength/2*frameTime*zoomLevel,0.))
 		end
         if is_key_pressed(sfKeyCode.sfKeyRight)
-			sfView_move(v.view, sfVector2f(networkLength/2*frameTime*zoomLevel,0.))
+			sfView_move(v.view, Vector{sfVector2f}(networkLength/2*frameTime*zoomLevel,0.))
 		end
         if is_key_pressed(sfKeyCode.sfKeyUp)
-			sfView_move(v.view, sfVector2f(0.,-networkLength/2*frameTime*zoomLevel))
+			sfView_move(v.view, Vector{sfVector2f}(0.,-networkLength/2*frameTime*zoomLevel))
 		end
         if is_key_pressed(sfKeyCode.sfKeyDown)
-			sfView_move(v.view, sfVector2f(0.,networkLength/2*frameTime*zoomLevel))
+			sfView_move(v.view, Vector{sfVector2f}(0.,networkLength/2*frameTime*zoomLevel))
 		end
         if is_key_pressed(sfKeyCode.sfKeyZ)
             sfView_zoom(v.view, 0.6^frameTime)
@@ -229,15 +229,15 @@ visualize(r::RoutingPaths) = visualize(RoutingViz(r))
 function redraw!(v::NetworkVisualizer)
     n = v.network
     # create position vectors (inverse y axe for plotting)
-    positions = sfVector2f[sfVector2f(node.x,-node.y) for node in n.nodes]
+    positions = [Vector{sfVector2f}(node.x,-node.y) for node in n.nodes]
     for i in 1:length(positions)
-       positions[i] = sfVector2f(n.nodes[i].x,-n.nodes[i].y)
+       positions[i] = Vector{sfVector2f}(n.nodes[i].x,-n.nodes[i].y)
     end
 
     #positions nodes
     for (i, no) in enumerate(v.nodes)
         sfCircleShape_setRadius(no, v.nodeRadius)
-        sfCircleShape_setPosition(no, positions[i] - sfVector2f(v.nodeRadius,v.nodeRadius))
+        sfCircleShape_setPosition(no, positions[i] - Vector{sfVector2f}(v.nodeRadius,v.nodeRadius))
         sfCircleShape_setFillColor(no, nodeColor(v.colors, v.network.nodes[i]))
     end
 
@@ -247,9 +247,9 @@ function redraw!(v::NetworkVisualizer)
         x = positions[o].y - positions[d].y
         y = positions[d].x - positions[o].x
         l = sqrt(x^2+y^2); x = x/l; y = y/l
-        offset = sfVector2f(x*v.nodeRadius*3. /5.,y*v.nodeRadius*3. /5.)
+        offset = Vector{sfVector2f}(x*v.nodeRadius*3. /5.,y*v.nodeRadius*3. /5.)
         road = Line(positions[o]+offset,positions[d]+offset, 4*v.nodeRadius/5.)
-        set_fillcolor(road,roadColor(v.colors, r))
+        Line_setFillColor(road,roadColor(v.colors, r))
         v.roads[o,d] = road
     end
     visualRedraw(v)
