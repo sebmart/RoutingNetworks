@@ -87,7 +87,7 @@ function parallelShortestPaths2!(r::RoutingPaths, batch_number::Int=10)
             parents[orig,:] = d.parents
         end
     end
-    steps = round(Int,linspace(1,nv(g), batch_number+1))
+    steps = round(Int,range(1,nv(g), batch_number+1))
     ranges = [steps[i]:steps[i+1] for i in 1:(length(steps)-1)]
 
     pmap(range_dijkstra, ranges)

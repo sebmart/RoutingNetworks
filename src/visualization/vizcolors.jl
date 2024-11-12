@@ -136,8 +136,8 @@ function RelativeSpeedColors(network::Network,
     slow = HSL(0,1.,.3)
     normal = HSL(60, .5, 0.8)
     fast =  HSL(120,0.7,.5)
-    slowpalette = linspace(normal, slow)
-    fastpalette = linspace(normal, fast)
+    slowpalette = range(normal, slow)
+    fastpalette = range(normal, fast)
     return RelativeSpeedColors(roadtimes, reftimes, slowpalette, fastpalette, maxRatio)
 end
 RelativeSpeedColors(r::RoutingPaths, reftimes::AbstractArray{Float64,2} = meanTimes(r.network, r.times); args...) =
@@ -150,7 +150,9 @@ RelativeSpeedColors(r.network, r.times, reftimes; args...)
 function meanTimes(network::Network, roadtimes::AbstractArray{Float64,2})
     totalTime = 0.
     totalDist = 0.
-    for (o,d) in edges(network.graph)
+    for edge in edges(network.graph)
+        o = edge.src 
+        d = edge.dst
         totalTime += roadtimes[o, d]
         totalDist += network.roads[o, d].distance
     end
