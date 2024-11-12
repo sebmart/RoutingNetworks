@@ -42,7 +42,7 @@ end
 function visualEvent(v::NetworkViz, event::sfEvent)
     if event.type == sfEventType.sfEvtMouseButtonPressed && event.button == sfMouseButton.sfMouseLeft
         x, y = event.sfMouseButtonEvent.x, event.sfMouseButtonEvent.y
-        coord = sfRenderWindow_mapPixelToCoords(v.window,Vector{sfVector2i}(x, y))
+        coord = sfRenderWindow_mapPixelToCoords(v.window,Vector{sfVector2i}(x, y),sfRenderWindow_getView(v.window))
 
         id = knn(v.tree,[Float64(coord.x),-Float64(coord.y)],1)[1][1]
         sfCircleShape_setFillColor(v.nodes[v.selectedNode], nodeColor(v.colors, v.network.nodes[v.selectedNode]))

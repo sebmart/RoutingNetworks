@@ -60,7 +60,7 @@ struct NodeProjector
 end
 function NodeProjector(n::Network)
     # Constructing tree
-    nodePos = Array(Float64,(2,length(n.nodes)))
+    nodePos = Array{Float64}(undef, (2,length(n.nodes)))
     for (i,node) in enumerate(n.nodes)
        nodePos[1,i] = node.x
        nodePos[2,i] = node.y

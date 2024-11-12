@@ -57,7 +57,7 @@ end
 function visualStartUpdate(v::RoutingViz,frameTime::Float64)
     if v.pathMode && !v.pathFrozen
         x, y = sfEvent.sfMouseMoveEvent.x, sfEvent.sfMouseMoveEvent.y
-        mouseCoord = sfRenderWindow_mapPixelToCoords(v.window, Vector{sfVector2i}(x, y))
+        mouseCoord = sfRenderWindow_mapPixelToCoords(v.window, Vector{sfVector2i}(x, y), sfRenderWindow_getView(v.window))
         nodeId = knn(v.networkviz.tree,[Float64(mouseCoord.x),-Float64(mouseCoord.y)],1)[1][1]
 
         if nodeId != v.destNode

@@ -116,7 +116,11 @@ function visualize(v::NetworkVisualizer)
     v.nodeRadius = 10.
 
     #create nodes
-    v.nodes = CircleShape[sfCircleShape_create() for i in 1:length(v.network.nodes)]
+    v.nodes = Array{Ptr{sfCircleShape}}(undef, length(v.network.nodes))
+
+    for i in 1:length(v.network.nodes)
+        v.nodes[i] = sfCircleShape_create()
+    end
 
     #create roads
     v.roads = Dict{Tuple{Int,Int},Line}()
