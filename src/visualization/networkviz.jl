@@ -11,7 +11,7 @@ mutable struct NetworkViz <: NetworkVisualizer
     network::Network
     window::sfRenderWindow
     view::sfView
-    nodes::Vector{sfCircleShape}
+    nodes::Vector{Ptr{sfCircleShape}}
     roads::Dict{Tuple{Int,Int},Line}
     nodeRadius::Float64
     colors::VizColors
