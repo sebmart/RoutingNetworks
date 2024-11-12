@@ -142,7 +142,7 @@ function visualize(v::NetworkVisualizer)
                                         C_NULL)
                 
     sfRenderWindow_setVerticalSyncEnabled(v.window, true)
-    event = Ref{sfEvent}()
+    event_ref = Ref{sfEvent}()
 
     # Set up the initial view
     minX, maxX, minY, maxY = boundingBox(Tuple{Float64,Float64}[(n.x,n.y) for n in v.network.nodes])
@@ -160,7 +160,7 @@ function visualize(v::NetworkVisualizer)
     clock = sfClock_create()
     # gc_enable(false)
     while Bool(sfRenderWindow_isOpen(v.window))
-        frameTime = Float64(as_seconds(sfClock_restart(clock)))
+        frameTime = Float64(sfTime_asSeconds(sfClock_restart(clock)))
         while Bool(sfRenderWindow_pollEvent(v.window, event_ref))
             event = Base.unsafe_convert(Ptr{sfEvent}, event_ref)
             type = unsafe_load(event.type)
@@ -187,39 +187,38 @@ function visualize(v::NetworkVisualizer)
                 elseif k == sfKeyD
                     hideNodes = !hideNodes
                 end
+                
+                if k == sfKeyLeft
+                    sfView_move(v.view, sfVector2f(-networkLength/2*frameTime*zoomLevel,0.))
+                end
+            
+                if k == sfKeyRight
+                    sfView_move(v.view, sfVector2f(networkLength/2*frameTime*zoomLevel,0.))
+                end
+    
+                if k == sfKeyUp
+                    sfView_move(v.view, sfVector2f(0.,-networkLength/2*frameTime*zoomLevel))
+                end
+    
+                if k == sfKeyDown
+                    sfView_move(v.view, sfVector2f(0.,networkLength/2*frameTime*zoomLevel))
+                end
+    
+                if k == sfKeyZ
+                    sfView_zoom(v.view, 0.6^frameTime)
+                    zoomLevel = sfView_getSize(v.view).x/viewWidth
+                end
+                
+                if k == sfKeyX
+                    sfView_zoom(v.view, 1/(0.6^frameTime))
+                    zoomLevel = sfView_getSize(v.view).x/viewWidth
+                end
             end
             # additional event processing
             visualEvent(v,event)
         end
 
-		if type == sfEvtKeyPressed
-            k = unsafe_load(event.key).code
-            if k == sfKeyLeft
-                sfView_move(v.view, sfVector2f(-networkLength/2*frameTime*zoomLevel,0.))
-            end
 		
-            if k == sfKeyRight
-                sfView_move(v.view, sfVector2f(networkLength/2*frameTime*zoomLevel,0.))
-            end
-
-            if k == sfKeyUp
-                sfView_move(v.view, sfVector2f(0.,-networkLength/2*frameTime*zoomLevel))
-            end
-
-            if k == sfKeyDown
-                sfView_move(v.view, sfVector2f(0.,networkLength/2*frameTime*zoomLevel))
-            end
-
-            if k == sfKeyZ
-                sfView_zoom(v.view, 0.6^frameTime)
-                zoomLevel = sfView_getSize(v.view).x/viewWidth
-            end
-            
-            if k == sfKeyX
-                sfView_zoom(v.view, 1/(0.6^frameTime))
-                zoomLevel = sfView_getSize(v.view).x/viewWidth
-            end
-        end
         sfRenderWindow_setView(v.window,v.view)
         sfRenderWindow_clear(v.window, sfColor_fromRGB(210,210,210))
         # additional updates
