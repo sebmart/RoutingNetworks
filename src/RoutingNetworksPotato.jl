@@ -3,7 +3,7 @@
 module RoutingNetworksPotato
 
 using LightGraphs, CSFML, NearestNeighbors, Colors, SparseArrays
-using CSFML.LibCSFML
+using CSFML.LibCSFML, Pkg
 import JLD, LibExpat
 
 #main
