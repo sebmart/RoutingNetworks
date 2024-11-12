@@ -150,10 +150,12 @@ RelativeSpeedColors(r.network, r.times, reftimes; args...)
 function meanTimes(network::Network, roadtimes::AbstractArray{Float64,2})
     totalTime = 0.
     totalDist = 0.
-    for (o,d) in edges(network.graph)
+    for e in edges(network.graph)   
+        o = src(first(e)), dst(first(e))
         totalTime += roadtimes[o, d]
         totalDist += network.roads[o, d].distance
     end
+
     meanspeed = totalDist/totalTime
     reftimes = spzeros(nv(network.graph),nv(network.graph))
     for road in values(network.roads)
