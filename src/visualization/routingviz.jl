@@ -56,8 +56,8 @@ end
 
 function visualStartUpdate(v::RoutingViz,frameTime::Float64)
     if v.pathMode && !v.pathFrozen
-        x, y = sfEvent.sfMouseMoveEvent.x, sfEvent.sfMouseMoveEvent.y
-        mouseCoord = sfRenderWindow_mapPixelToCoords(v.window, Vector{sfVector2i}(x, y), sfRenderWindow_getView(v.window))
+        mouse_pos = sfMouse_getPosition(v.window)
+        mouseCoord = sfRenderWindow_mapPixelToCoords(v.window, mouse_pos, sfRenderWindow_getView(v.window))
         nodeId = knn(v.networkviz.tree,[Float64(mouseCoord.x),-Float64(mouseCoord.y)],1)[1][1]
 
         if nodeId != v.destNode
@@ -77,7 +77,7 @@ end
 function visualEndUpdate(v::RoutingViz, frameTime::Float64)
     if v.pathMode #print the path on top of other roads
         for segment in v.path
-            draw(v.window, segment)
+            sfRenderWindow_drawLine(v.window, segment)
         end
     end
 end
@@ -92,8 +92,9 @@ function visualRedraw(v::RoutingViz)
 end
 
 
-function visualEvent(v::RoutingViz, event::sfEvent)
-    if event.type == sfEventType.sfEvtKeyPressed && event.code == sfKeyCode.sfKeyP
+function visualEvent(v::RoutingViz, event::Ptr{sfEvent})
+    type = unsafe_load(event.type)
+    if type == sfEvtKeyPressed && unsafe_load(event.key).code == sfKeyP
         if v.pathMode
             v.pathMode = false
             sfRenderWindow_setTitle(v.window, "")
@@ -106,7 +107,7 @@ function visualEvent(v::RoutingViz, event::sfEvent)
             v.path = []
         end
     elseif v.pathMode
-        if event.type == sfEventType.sfEvtMouseButtonPressed && event.button == sfMouseButton.sfMouseLeft
+        if type == sfEvtMouseButtonPressed && unsafe_load(event.mouseButton).button == sfMouseLeft
             v.pathFrozen = !v.pathFrozen
         end
     else
@@ -120,7 +121,7 @@ end
 function drawPath(v::RoutingViz)
     v.path = [Line(copy(v.roads[o, d].rect)) for (o,d) in getPathEdges(v.routing, v.networkviz.selectedNode, v.destNode)]
     for line in v.path
-        Line_setThickness(line, get_thickness(line)*4.)
+        Line_setThickness(line, line.thickness * 4.)
         Line_setFillColor(line, sfColor_fromRGB(0, 0, 125))
     end
 end

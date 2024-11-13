@@ -33,7 +33,7 @@ mutable struct Line
     rect::Vector{sfVector2f}
     thickness::Float32
 end
-Line() = Line(sfVertexArray_create(), [], 1.) 
+Line() = Line(sfVertexArray_create(), [], 5.) 
 function Line(src::sfVector2f, dst::sfVector2f, thickness::Float64 = 1.)
     self = Line()
     sfVertexArray_setPrimitiveType(self.graph, sfTriangleStrip)
@@ -73,7 +73,7 @@ end
 """
     `visualEvent` => called each frame, is given the events
 """
-function visualEvent(v::NetworkVisualizer, event::sfEvent)
+function visualEvent(v::NetworkVisualizer, event::Ptr{sfEvent})
 end
 
 """
@@ -117,7 +117,8 @@ end
     - if given network, calls `NodeInfo` visualizer is chosen
 """
 function visualize(v::NetworkVisualizer)
-    v.nodeRadius = 10.
+    # Edit node Radius for better view
+    v.nodeRadius = 30.
 
     #create nodes
     print(typeof(v.network.nodes), ' ', length(v.network.nodes), "mufasa")
@@ -168,7 +169,7 @@ function visualize(v::NetworkVisualizer)
                 sfRenderWindow_close(v.window)
             end
             if type == sfEvtResized
-                window_w, window_h = unsafe_load(event.width), unsafe_load(event.height)
+                window_w, window_h = unsafe_load(event.size).width, unsafe_load(event.size).height
                 viewWidth = max(maxX-minX, (maxY-minY)*window_w/window_h)
                 viewHeigth = max(maxY-minY, (maxX-minX)*window_h/window_w)
                 sfView_setSize(v.view, sfVector2f(viewWidth, viewHeigth))
@@ -187,7 +188,7 @@ function visualize(v::NetworkVisualizer)
                 elseif k == sfKeyD
                     hideNodes = !hideNodes
                 end
-                
+
                 if k == sfKeyLeft
                     sfView_move(v.view, sfVector2f(-networkLength/2*frameTime*zoomLevel,0.))
                 end
@@ -215,12 +216,13 @@ function visualize(v::NetworkVisualizer)
                 end
             end
             # additional event processing
-            visualEvent(v,event)
+            visualEvent(v, event)
         end
 
 		
         sfRenderWindow_setView(v.window,v.view)
-        sfRenderWindow_clear(v.window, sfColor_fromRGB(210,210,210))
+        # Use black for better contrast
+        sfRenderWindow_clear(v.window, sfColor_fromRGB(0, 0, 0))
         # additional updates
         visualStartUpdate(v, frameTime)
         for road in values(v.roads)
