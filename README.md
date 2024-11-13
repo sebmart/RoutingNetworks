@@ -5,7 +5,7 @@ From Sebastien Martin
 - Can also create virtual routing networks
 - visualize them with SFML
 
-Update for Julia 1.x: 
+# Update for Julia 1.x: 
 - Migrated from SFML to CSFML bindings
 - Updated modules and struct format to July 1.8.5
 - Updated dependency
