@@ -58,9 +58,9 @@ function Line_setThickness(line::Line, thickness::Float64)
         line.thickness = thickness
     end
     sfConvexShape_setPoint(line.graph, 0, src + line.thickness*normal)
-    sfConvexShape_setPoint(line.graph, 1, src - line.thickness*normal)
-    sfConvexShape_setPoint(line.graph, 2, dst + line.thickness*normal)
-    sfConvexShape_setPoint(line.graph, 3, dst - line.thickness*normal)
+    sfConvexShape_setPoint(line.graph, 3, src - line.thickness*normal)
+    sfConvexShape_setPoint(line.graph, 1, dst + line.thickness*normal)
+    sfConvexShape_setPoint(line.graph, 2, dst - line.thickness*normal)
 end
 
 function sfRenderWindow_drawLine(window::Ptr{sfRenderWindow}, line::Line)
