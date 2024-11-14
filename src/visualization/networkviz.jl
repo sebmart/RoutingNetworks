@@ -9,9 +9,9 @@
 mutable struct NetworkViz <: NetworkVisualizer
     # Mandatory attributes
     network::Network
-    window::RenderWindow
-    view::View
-    nodes::Vector{CircleShape}
+    window::sfRenderWindow
+    view::sfView
+    nodes::Vector{Ptr{sfCircleShape}}
     roads::Dict{Tuple{Int,Int},Line}
     nodeRadius::Float64
     colors::VizColors
@@ -39,19 +39,23 @@ mutable struct NetworkViz <: NetworkVisualizer
     end
 end
 
-function visualEvent(v::NetworkViz, event::Event)
-    if get_type(event) == EventType.MOUSE_BUTTON_PRESSED && get_mousebutton(event).button == MouseButton.LEFT
-        x,y = get_mousebutton(event).x, get_mousebutton(event).y
-        coord = pixel2coords(v.window,Vector2i(x,y))
+function visualEvent(v::NetworkViz, event::Ptr{sfEvent})
+    type = unsafe_load(event.type)
+    if type == sfEvtMouseButtonPressed 
+        if unsafe_load(event.mouseButton).button == sfMouseLeft
+            x = unsafe_load(event.mouseButton).x
+            y =  unsafe_load(event.mouseButton).y
+            coord = sfRenderWindow_mapPixelToCoords(v.window,sfVector2i(x, y),sfRenderWindow_getView(v.window))
 
-        id = knn(v.tree,[Float64(coord.x),-Float64(coord.y)],1)[1][1]
-        set_fillcolor(v.nodes[v.selectedNode], nodeColor(v.colors, v.network.nodes[v.selectedNode]))
-        set_fillcolor(v.nodes[id], SFML.red)
-        v.selectedNode = id
-        set_title(v.window, "Node : $id in: $(in_neighbors(v.network.graph,id)) out: $(out_neighbors(v.network.graph,id))")
+            id = knn(v.tree,[Float64(coord.x),-Float64(coord.y)],1)[1][1]
+            sfCircleShape_setFillColor(v.nodes[v.selectedNode], nodeColor(v.colors, v.network.nodes[v.selectedNode]))
+            sfCircleShape_setFillColor(v.nodes[id], sfColor_fromRGB(255, 0, 0))
+            v.selectedNode = id
+            sfRenderWindow_setTitle(v.window, "Node : $id in: $(in_neighbors(v.network.graph,id)) out: $(out_neighbors(v.network.graph,id))")
+        end
     end
 end
 
 function visualRedraw(v::NetworkViz)
-    set_fillcolor(v.nodes[v.selectedNode], SFML.red)
+    sfCircleShape_setFillColor(v.nodes[v.selectedNode], sfColor_fromRGB(255, 0, 0))
 end

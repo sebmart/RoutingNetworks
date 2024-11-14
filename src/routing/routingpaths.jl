@@ -150,7 +150,7 @@ function getPathWithTimes(r::RoutingPaths, orig::Int, dest::Int, prev::Int = ori
     end
     path = path[end:-1:1]
 
-    times = Array(Tuple{Float64,Float64},length(path)-1)
+    times = Array{Tuple{Float64,Float64}}(undef, length(path)-1)
     t = startTime
     for i in 1:length(path) - 1
         rdTime = r.times[path[i],path[i+1]]

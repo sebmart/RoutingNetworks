@@ -40,7 +40,7 @@ function oneway(w::OSMWay)
             junction == "roundabout")
 end
 
-visible{T <: OSMElement}(obj::T) = (get(obj.tags, "visible", "") != "false")
+visible(obj::T) where {T <: OSMElement} = (get(obj.tags, "visible", "") != "false")
 services(w::OSMWay) = (get(w.tags,"highway", "") == "services")
 reverse(w::OSMWay) = (get(w.tags,"oneway", "") == "-1")
 toradians(degree::AbstractFloat) = degree * π / 180.0

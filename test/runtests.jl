@@ -1,4 +1,4 @@
-using RoutingNetworks
+using RoutingNetworksPotato
 using Base.Test
 
 # write your own tests here

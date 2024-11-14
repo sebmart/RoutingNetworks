@@ -1,8 +1,9 @@
-__precompile__(false)
+# __precompile__(false)
 
-module RoutingNetworks
+module RoutingNetworksPotato
 
-using LightGraphs, SFML, NearestNeighbors, Colors
+using LightGraphs, CSFML, NearestNeighbors, Colors, SparseArrays
+using CSFML.LibCSFML, Pkg
 import JLD, LibExpat
 
 #main
@@ -22,7 +23,7 @@ export roadTypeRouting, randomTimeRouting, fixedSpeedTimes, maxSpeedTimes, unifo
 export allPairTimes
 
 #visualization
-export NetworkVisualizer, NetworkViz, RoutingViz
+export NetworkVisualizer, NetworkViz, RoutingViz, Line
 export visualize, visualInit, visualEvent, visualUpdate, visualRedraw, copyVisualData, redraw!
 export VizColors, RoutingColors, RoadTypeColors, FadedColors, SpeedColors, RelativeSpeedColors
 
@@ -56,6 +57,5 @@ include("visualization/vizcolors.jl")
 include("visualization/visualize.jl")
 include("visualization/networkviz.jl")
 include("visualization/routingviz.jl")
-
 
 end

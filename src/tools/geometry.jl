@@ -6,7 +6,7 @@
 """
     Return bounding box of polygon/ list of points
 """
-function boundingBox{T<:AbstractFloat}(poly::Vector{Tuple{T,T}})
+function boundingBox(poly::Vector{Tuple{T,T}}) where {T<:AbstractFloat}
     minX::T = Inf; maxX::T = -Inf; minY::T = Inf; maxY::T = -Inf
     for (x,y) in poly
         minX = min(minX,x)
@@ -46,14 +46,14 @@ end
 """
 distanceCoord(pt1::Node, pt2::Node) = distanceCoord(pt1.x, pt1.y, pt2.x, pt2.y)
 
-function distanceCoord{T<:AbstractFloat}(x1::T, y1::T, x2::T, y2::T)
+function distanceCoord(x1::T, y1::T, x2::T, y2::T) where {T<:AbstractFloat}
     return sqrt((x2-x1)^2+(y2-y1)^2)
 end
 
 """
     Check is a point is inside a polygon
 """
-function pointInsidePolygon{T<:AbstractFloat}(x::AbstractFloat,y::AbstractFloat,poly::Vector{Tuple{T,T}})
+function pointInsidePolygon(x::AbstractFloat,y::AbstractFloat,poly::Vector{Tuple{T,T}}) where {T<:AbstractFloat}
     n = length(poly)
     inside =false
 

@@ -1,3 +1,5 @@
+using Distributed
+
 ###################################################
 ## Use timings to compute shortest paths
 ###################################################
@@ -47,7 +49,7 @@ function parallelShortestPaths!(r::RoutingPaths; batch_number::Int=0)
     pathTimes = SharedArray(Float64, (nv(g), nv(g)))
     parents  = SharedArray(Int,(nv(g),nv(g)))
 
-    @sync @parallel for orig in 1:nv(g)
+    @sync @distributed for orig in 1:nv(g)
         d = dijkstra_shortest_paths(g, orig, r.times)
         pathTimes[orig,:] = d.dists
         parents[orig,:] = d.parents
@@ -85,7 +87,7 @@ function parallelShortestPaths2!(r::RoutingPaths, batch_number::Int=10)
             parents[orig,:] = d.parents
         end
     end
-    steps = round(Int,linspace(1,nv(g), batch_number+1))
+    steps = round(Int,range(1,nv(g), batch_number+1))
     ranges = [steps[i]:steps[i+1] for i in 1:(length(steps)-1)]
 
     pmap(range_dijkstra, ranges)

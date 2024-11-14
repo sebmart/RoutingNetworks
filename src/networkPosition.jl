@@ -60,7 +60,7 @@ struct NodeProjector
 end
 function NodeProjector(n::Network)
     # Constructing tree
-    nodePos = Array(Float64,(2,length(n.nodes)))
+    nodePos = Array{Float64}(undef, (2,length(n.nodes)))
     for (i,node) in enumerate(n.nodes)
        nodePos[1,i] = node.x
        nodePos[2,i] = node.y
@@ -202,7 +202,7 @@ function NetworkPosition(proj::RoadProjector, lat, lon)
     end
     (o,d) = bestOD
     if otherSide && haskey(proj.network.roads, (d,o)) # Select the road direction
-        bestFrac = 1.-bestFrac
+        bestFrac = 1. -bestFrac
         (o,d) = (d,o)
     end
 

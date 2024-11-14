@@ -69,7 +69,7 @@ end
 """
 Returns nodes that are inside a Polygon
 """
-function inPolygon{T<:AbstractFloat}(n::Network, poly::Vector{Tuple{T,T}})
+function inPolygon(n::Network, poly::Vector{Tuple{T,T}}) where {T<:AbstractFloat}
     inPoly = Int[]
     for i in vertices(n.graph)
         if pointInsidePolygon(n.nodes[i].lon, n.nodes[i].lat, poly)

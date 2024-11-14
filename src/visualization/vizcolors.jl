@@ -12,12 +12,12 @@ abstract type VizColors end
 """
     `nodeColor` returns a node's color.
 """
-nodeColor(colors::VizColors, node::Node) = SFML.Color(0,0,0)
+nodeColor(colors::VizColors, node::Node) = sfColor_fromRGB(0,0,0)
 
 """
     `roadColor` returns a road's color
 """
-roadColor(colors::VizColors, road::Road) = SFML.Color(50,50,255)
+roadColor(colors::VizColors, road::Road) = sfColor_fromRGB(50,50,255)
 
 function Base.show(io::IO, viz::VizColors)
     typeName = split(string(typeof(viz)),".")[end]
@@ -30,13 +30,13 @@ end
     `RoadTypeColors` is a road-type based coloring scheme
 """
 mutable struct RoadTypeColors <: VizColors
-    typecolors::Vector{SFML.Color}
+    typecolors::Vector{sfColor}
 end
 
 RoadTypeColors() = RoadTypeColors(
-        [SFML.Color(0,255,0)  , SFML.Color(55,200,0), SFML.Color(105,150,0),
-         SFML.Color(150,105,0), SFML.Color(0,0,125) , SFML.Color(0,0,125)  ,
-         SFML.Color(0,0,125)  , SFML.Color(0,0,125)])
+        [sfColor_fromRGB(0,255,0), sfColor_fromRGB(55,200,0), sfColor_fromRGB(105,150,0),
+         sfColor_fromRGB(150,105,0), sfColor_fromRGB(0,0,125) , sfColor_fromRGB(0,0,125)  ,
+         sfColor_fromRGB(0,0,125)  , sfColor_fromRGB(0,0,125)])
 
 roadColor(colors::RoadTypeColors, road::Road) = colors.typecolors[road.roadType]
 
@@ -44,17 +44,17 @@ roadColor(colors::RoadTypeColors, road::Road) = colors.typecolors[road.roadType]
     `FadedColors` is just road-type with custom transparency
 """
 mutable struct FadedColors <: VizColors
-    typecolors::Vector{SFML.Color}
+    typecolors::Vector{sfColor}
     transp::Int
 end
-nodeColor(colors::FadedColors, node::Node) = SFML.Color(0,0,0, colors.transp)
+nodeColor(colors::FadedColors, node::Node) = sfColor(0,0,0, colors.transp)
 
 function FadedColors(transp)
     a = round(Int, transp*255)
     FadedColors(
-        [SFML.Color(0,255,0, a)  , SFML.Color(55,200,0, a), SFML.Color(105,150,0, a),
-         SFML.Color(150,105, a), SFML.Color(0,0,125, a) , SFML.Color(0,0,125, a)  ,
-         SFML.Color(0,0,125, a)  , SFML.Color(0,0,125, a)], a)
+        [sfColor(0,255,0, a)  , sfColor(55,200,0, a), sfColor(105,150,0, a),
+         sfColor(150,105,0, a), sfColor(0,0,125, a) , sfColor(0,0,125, a)  ,
+         sfColor(0,0,125, a)  , sfColor(0,0,125, a)], a)
 end
 roadColor(colors::FadedColors, road::Road) = colors.typecolors[road.roadType]
 
@@ -109,7 +109,7 @@ function roadColor(colors::SpeedColors, road::Road)
     c = round(Int,max(0, min(1, (s - colors.minSpeed)/(colors.maxSpeed-colors.minSpeed))) * (length(colors.palette)-1)) +1
 
     color = colors.palette[c]
-    return SFML.Color(round(Int,color.r*255),round(Int,255*color.g),round(Int,255*color.b))
+    return sfColor_fromRGB(round(Int,color.r*255),round(Int,255*color.g),round(Int,255*color.b))
 end
 
 """
@@ -133,11 +133,11 @@ function RelativeSpeedColors(network::Network,
                              reftimes::AbstractArray{Float64,2} = meanTimes(network, roadtimes);
                              maxRatio::Real=3)
     maxRatio = float(maxRatio)
-    slow = HSL(0,1.,.3)
-    normal = HSL(60, .5, 0.8)
-    fast =  HSL(120,0.7,.5)
-    slowpalette = linspace(normal, slow)
-    fastpalette = linspace(normal, fast)
+    slow = [0, 1., .3]
+    normal = [60, .5, 0.8]
+    fast =  [120, .7, .5]
+    slowpalette = [HSL(a...) for a in LinRange(normal, slow, 100)]
+    fastpalette = [HSL(a...) for a in LinRange(normal, fast, 100)]
     return RelativeSpeedColors(roadtimes, reftimes, slowpalette, fastpalette, maxRatio)
 end
 RelativeSpeedColors(r::RoutingPaths, reftimes::AbstractArray{Float64,2} = meanTimes(r.network, r.times); args...) =
@@ -150,10 +150,12 @@ RelativeSpeedColors(r.network, r.times, reftimes; args...)
 function meanTimes(network::Network, roadtimes::AbstractArray{Float64,2})
     totalTime = 0.
     totalDist = 0.
-    for (o,d) in edges(network.graph)
+    for e in edges(network.graph)   
+        o, d = src(e), dst(e)
         totalTime += roadtimes[o, d]
         totalDist += network.roads[o, d].distance
     end
+
     meanspeed = totalDist/totalTime
     reftimes = spzeros(nv(network.graph),nv(network.graph))
     for road in values(network.roads)
@@ -174,5 +176,5 @@ function roadColor(colors::RelativeSpeedColors, road::Road)
 
     paletteBin = round(Int, 1 + (length(palette)-1) * (min(speedratio,colors.maxRatio) - 1) / (colors.maxRatio - 1))
     color = palette[paletteBin]
-    return SFML.Color(round(Int,color.r*255),round(Int,255*color.g),round(Int,255*color.b))
+    return sfColor_fromRGB(round(Int,color.r*255),round(Int,255*color.g),round(Int,255*color.b))
 end
