@@ -26,42 +26,45 @@ abstract type NetworkVisualizer end
 """
     Class Line for visualizing path
 """
+function Base.:-(a::sfVector2f, b::sfVector2f) return sfVector2f(a.x - b.x, a.y - b.y) end
+function Base.:+(a::sfVector2f, b::sfVector2f) return sfVector2f(a.x + b.x, a.y + b.y) end
+function Base.:-(a::sfVector2f) return sfVector2f(-a.x, -a.y) end
+function Base.:*(b::Union{Float16, Float32, Float64}, a::sfVector2f) return sfVector2f(b*a.x, b*a.y) end
+function norm(a::sfVector2f) return sqrt(a.x ^ 2 + a.y ^ 2) end
 mutable struct Line
     # Graphical node
-    graph::Ptr{sfVertexArray}
+    graph::Ptr{sfConvexShape}
     # Line coords
     rect::Vector{sfVector2f}
     thickness::Float32
 end
-Line() = Line(sfVertexArray_create(), [], 5.) 
+
+Line() = Line(sfConvexShape_create(), [], 1.) 
 function Line(src::sfVector2f, dst::sfVector2f, thickness::Float64 = 1.)
     self = Line()
-    sfVertexArray_setPrimitiveType(self.graph, sfTriangleStrip)
+    sfConvexShape_setPointCount(self.graph, 4)
+    sfConvexShape_setFillColor(self.graph, sfColor_fromRGB(220, 220, 220))
     self.rect = [src, dst]
     Line_setThickness(self, thickness)
     return self
 end
 # Set color equal set thickness to negative
-Line_setFillColor(line::Line, color::sfColor) = Line_setThickness(line, -1., color)
-function Line_setThickness(line::Line, thickness::Float64, color::sfColor=sfColor_fromRGB(255, 0, 0))
+Line_setFillColor(line::Line, color::sfColor) = sfConvexShape_setFillColor(line.graph, color)
+function Line_setThickness(line::Line, thickness::Float64)
     (src, dst) = line.rect
-    sfVertexArray_clear(line.graph)
+    normal = sfVector2f(src.y - dst.y, dst.x - src.x) 
+    normal = 1 / norm(normal) * normal
     if thickness > 0
         line.thickness = thickness
     end
-    src_h = sfVertex(sfVector2f(src.x, src.y - line.thickness), color, sfVector2f(0., 0.))
-    src_l = sfVertex(sfVector2f(src.x, src.y + line.thickness), color, sfVector2f(0., 0.))
-    dst_h = sfVertex(sfVector2f(dst.x, dst.y - line.thickness), color, sfVector2f(0., 0.))
-    dst_l = sfVertex(sfVector2f(dst.x, dst.y + line.thickness), color, sfVector2f(0., 0.))
-    sfVertexArray_append(line.graph, src_h)
-    sfVertexArray_append(line.graph, dst_h)
-    sfVertexArray_append(line.graph, dst_l)
-    sfVertexArray_append(line.graph, src_l)
+    sfConvexShape_setPoint(line.graph, 0, src + line.thickness*normal)
+    sfConvexShape_setPoint(line.graph, 1, src - line.thickness*normal)
+    sfConvexShape_setPoint(line.graph, 2, dst + line.thickness*normal)
+    sfConvexShape_setPoint(line.graph, 3, dst - line.thickness*normal)
 end
 
-
 function sfRenderWindow_drawLine(window::Ptr{sfRenderWindow}, line::Line)
-    sfRenderWindow_drawVertexArray(window, line.graph, C_NULL)
+    sfRenderWindow_drawConvexShape(window, line.graph, C_NULL)
 end
 
 """
